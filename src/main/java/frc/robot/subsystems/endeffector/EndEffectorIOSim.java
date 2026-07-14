@@ -244,7 +244,7 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         Logger.recordOutput(
                 "FieldSimulation/Held Crystal", hasCrystal ? interpolateHeldPose(getHeldCrystalPose()) : Pose3d.kZero);
         Logger.recordOutput(
-                "FieldSimulation/Held Algae", hasAlgae ? interpolateHeldPose(getHeldAlgaePose()) : Pose3d.kZero);
+                "FieldSimulation/Held Gemstone", hasAlgae ? interpolateHeldPose(getHeldAlgaePose()) : Pose3d.kZero);
     }
 
     private Pose3d interpolateHeldPose(Pose3d targetPose) {
