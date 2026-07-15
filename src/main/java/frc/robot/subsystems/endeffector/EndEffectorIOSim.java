@@ -105,6 +105,10 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         inputs.hasGemstone = hasGemstone;
     }
 
+    public Runnable getGamePieceVizRunnable() {
+        return () -> visualizeGamePieces();
+    }
+
     private void updateRollerSim(double dtSeconds) {
         leftSimState.setSupplyVoltage(Constants.NOMINAL_VOLTAGE);
         rollerSim.setInputVoltage(leftSimState.getMotorVoltage());
@@ -200,8 +204,6 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         } else if (crystalPos < MIN_POS + POS_TOLERANCE) {
             shootCrystal(true, topVolts > 0.5);
         }
-
-        visualizeGamePieces();
     }
 
     private void updateCANRangeSims() {

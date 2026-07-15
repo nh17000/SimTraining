@@ -72,10 +72,12 @@ public class RobotContainer {
 
     // Controller
     private static final CommandXboxController controller = new CommandXboxController(0);
-//     private static final CommandXboxController opController = new CommandXboxController(1);
+    // private static final CommandXboxController opController = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
+
+    private Runnable gamePieceVis;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -133,8 +135,12 @@ public class RobotContainer {
                               // driveSimulation::getSimulatedDriveTrainPose)
                 );
                 arm = new Arm(new ArmIOSim());
-                endEffector = new EndEffector(new EndEffectorIOSim(
-                        driveSimulation, () -> arm.getArmPosition().getWristTransform()));
+
+                EndEffectorIOSim eeSim = new EndEffectorIOSim(
+                        driveSimulation, () -> arm.getArmPosition().getWristTransform());
+                gamePieceVis = eeSim.getGamePieceVizRunnable();
+
+                endEffector = new EndEffector(eeSim);
                 align = new AutoAlign(driveSimulation::getSimulatedDriveTrainPose);
 
                 break;
@@ -313,7 +319,7 @@ public class RobotContainer {
         if (Constants.currentMode != Constants.Mode.SIM)
             return;
 
-        drive.setPose(new Pose2d(14.77, 2.158, Rotation2d.kZero));
+        drive.setPose(new Pose2d(14.77, 2.158, Rotation2d.k180deg));
         SimulatedArena.getInstance().resetFieldForAuto();
     }
 
@@ -329,6 +335,7 @@ public class RobotContainer {
         Logger.recordOutput(
                 "FieldSimulation/Gemstones",
                 SimulatedArena.getInstance().getGamePiecesArrayByType("Gemstone"));
+        gamePieceVis.run();
     }
 
     public static boolean isRedAlliance() {

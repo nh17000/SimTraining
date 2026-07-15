@@ -23,7 +23,7 @@ public class ArmConstants {
         TOP_CLASSIFIER(64, 14, -45),
         BOTTOM_CLASSIFIER(50, 2.5, -35),
         HIGH_ALGAE_BACKWARDS(100, 16, 80),
-        HOLD_CORAL(60, 0, 80),
+        HOLD_CORAL(60, 0, -40),
         HOLD_ALGAE(90, 0, -20),
         TUNABLE(0, 0, 125);
 
@@ -62,7 +62,7 @@ public class ArmConstants {
                 case 4 -> isForwards ? ArmState.UPPER_CRYSTAL : ArmState.UPPER_CRYSTAL_BACKWARDS;
                 case 3 -> isForwards ? ArmState.LOWER_CRYSTAL : ArmState.LOWER_CRYSTAL_BACKWARDS;
                 case 2 -> isForwards ? ArmState.GEMSTONE_INTAKE : ArmState.HIGH_ALGAE_BACKWARDS;
-                case 1 -> isForwards ? ArmState.TOP_CLASSIFIER : ArmState.BOTTOM_CLASSIFIER;
+                case 1 -> isForwards ? ArmState.BOTTOM_CLASSIFIER : ArmState.TOP_CLASSIFIER;
                 default -> ArmState.STOWED;
             };
         }

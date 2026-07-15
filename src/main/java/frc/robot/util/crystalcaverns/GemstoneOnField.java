@@ -10,7 +10,6 @@ import org.dyn4j.geometry.Geometry;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 public class GemstoneOnField extends GamePieceOnFieldSimulation {
-    // TODO: triangle if horizontal or rectangle if upright?
     public static final GamePieceInfo GEMSTONE_INFO = new GamePieceInfo(
             "Gemstone", Geometry.createCircle(Units.inchesToMeters(4)), Inches.of(1), Pounds.of(1), 3.5, 5, 0.3);
 
