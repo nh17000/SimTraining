@@ -4,6 +4,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -27,7 +28,9 @@ public class GemstoneOnFly extends GamePieceProjectile {
                 launchingSpeed,
                 shooterAngle);
 
-        super.withTouchGroundHeight(0.8);
+        // cone's origin is at bottom
+        // might clip through ground if rotated...
+        super.withTouchGroundHeight(Units.inchesToMeters(0.5)); 
         super.enableBecomesGamePieceOnFieldAfterTouchGround();
     }
 }

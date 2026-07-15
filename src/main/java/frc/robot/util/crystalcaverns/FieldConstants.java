@@ -96,6 +96,22 @@ public class FieldConstants {
     public static final double LOWER_BRANCH_HEIGHT = Units.inchesToMeters(19);
     public static final double UPPER_BRANCH_HEIGHT = Units.inchesToMeters(32);
 
+    public static final Pose3d BLUE_GEMSTONE_STARTING_POSE = new Pose3d(
+        BLUE_CAVE_CENTER.getX(), BLUE_CAVE_CENTER.getY(), Units.inchesToMeters(32.813), Rotation3d.kZero);
+    public static final Pose3d RED_GEMSTONE_STARTING_POSE = new Pose3d(
+        FIELD_LENGTH - BLUE_CAVE_CENTER.getX(), BLUE_CAVE_CENTER.getY(), Units.inchesToMeters(32.813), Rotation3d.kZero);
+    
+    public static final Translation2d[] JEWELRY_VORTICES = new Translation2d[6];
+    static {
+        for (int i = 0; i < JEWELRY_VORTICES.length; i++) {
+            JEWELRY_VORTICES[i] = new Translation2d(0.293294, Rotation2d.fromDegrees(60 * i)).plus(CENTER_ORIGIN);
+        }
+    }
+
+    public static final double JEWELRY_POS_TOLERANCE = Units.inchesToMeters(12);
+    public static final double JEWELRY_ROT_TOLERANCE = Units.degreesToRadians(30);
+    public static final double JEWELRY_MIN_Z = Units.inchesToMeters(12);
+
     public static final Translation2d RED_MINE_CORNER_A = new Translation2d(FIELD_LENGTH / 2.0 - 6.493848, 0);
     public static final Translation2d BLUE_MINE_CORNER_A = new Translation2d(FIELD_LENGTH / 2.0 + 6.493848, 0);
     public static final Translation2d RED_MINE_CORNER_B = new Translation2d(0, FIELD_WIDTH / 2.0 - 3.044640);
@@ -133,15 +149,31 @@ public class FieldConstants {
             .map(pointAtBlue -> new Translation2d(FIELD_LENGTH - pointAtBlue.getX(), pointAtBlue.getY()))
             .toArray(Translation2d[]::new);
 
-    public static final List<Pose2d> ALIGN_POSES = new ArrayList<>();
+    public static final List<Pose2d> CAVE_ALIGN_POSES = new ArrayList<>();
     public static final double BRANCH_TO_ROBOT = Units.inchesToMeters(30);
     static {
         for (int i = 0; i < BLUE_LOWER_BRANCHES.length; i++) {
             Rotation2d blueRot = Rotation2d.fromDegrees(45 * i + 22.5);
-            ALIGN_POSES.add(new Pose2d(BLUE_LOWER_BRANCHES[i].plus(new Translation2d(BRANCH_TO_ROBOT, blueRot)), blueRot));
+            CAVE_ALIGN_POSES.add(new Pose2d(BLUE_LOWER_BRANCHES[i].plus(new Translation2d(BRANCH_TO_ROBOT, blueRot)), blueRot));
             
             Rotation2d redRot = Rotation2d.fromDegrees(-45 * i + 157.5);
-            ALIGN_POSES.add(new Pose2d(RED_LOWER_BRANCHES[i].plus(new Translation2d(BRANCH_TO_ROBOT, redRot)), redRot));
+            CAVE_ALIGN_POSES.add(new Pose2d(RED_LOWER_BRANCHES[i].plus(new Translation2d(BRANCH_TO_ROBOT, redRot)), redRot));
+        }
+    }
+
+    public static final List<Pose2d> CLASSIFIER_ALIGN_POSES = new ArrayList<>();
+    static {
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.955, 5.2, Rotation2d.kZero));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.955, 5.9, Rotation2d.kZero));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.955, 5.2, Rotation2d.k180deg));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.955, 5.9, Rotation2d.k180deg));
+    }
+
+    public static final List<Pose2d> JEWELRY_ALIGN_POSES = new ArrayList<>();
+    static {
+        for (int i = 0; i < 6; i++) {
+            Rotation2d rot = Rotation2d.fromDegrees(60 * i + 30);
+            JEWELRY_ALIGN_POSES.add(new Pose2d(CENTER_ORIGIN.plus(new Translation2d(BRANCH_TO_ROBOT, rot)), rot.plus(Rotation2d.k180deg)));
         }
     }
 

@@ -19,7 +19,7 @@ public class EndEffector extends SubsystemBase {
     @AutoLogOutput
     @Getter
     @Setter
-    private GamePieceMode mode = GamePieceMode.VERTICAL_CORAL;
+    private GamePieceMode mode = GamePieceMode.NONCLASSIFIER;
 
     private EndEffectorIO io;
     private final EndEffectorIOInputsAutoLogged inputs = new EndEffectorIOInputsAutoLogged();
@@ -43,15 +43,10 @@ public class EndEffector extends SubsystemBase {
             boolean frontDetected = inputs.frontData.isDetected();
             boolean backDetected = inputs.backData.isDetected();
 
-            state = switch (mode) {
-                case VERTICAL_CORAL -> {
-                    if (frontDetected && backDetected) yield EEState.OFF;
-                    if (frontDetected) yield EEState.INDEXING_FWD;
-                    if (backDetected) yield EEState.INDEXING_BWD;
-                    yield EEState.VERTICAL_CORAL_INTAKE;
-                }
-                case HORIZONTAL_CORAL -> hasCoral() ? EEState.INDEXING_HORIZONTAL : EEState.HORIZONTAL_CORAL_INTAKE;
-                case ALGAE -> hasAlgae() ? EEState.OFF : EEState.ALGAE_INTAKE;};
+            if (hasGemstone() || (frontDetected && backDetected)) state = EEState.OFF;
+            else if (frontDetected) state = EEState.INDEXING_FWD;
+            else if (backDetected) state = EEState.INDEXING_BWD;
+            else state = EEState.INTAKE;
         });
     }
 
@@ -61,39 +56,34 @@ public class EndEffector extends SubsystemBase {
             boolean frontTripped = inputs.frontData.isDetected();
             boolean backTripped = inputs.backData.isDetected();
 
-            state = switch (mode) {
-                case VERTICAL_CORAL -> {
-                    if (isForwards && backTripped) yield EEState.INDEXING_BWD;
-                    if (!isForwards && frontTripped) yield EEState.INDEXING_FWD;
-                    yield EEState.OFF;
-                }
-                case HORIZONTAL_CORAL -> EEState.INDEXING_HORIZONTAL;
-                case ALGAE -> EEState.OFF;};
+            if (hasGemstone()) state = EEState.OFF;
+            else if (isForwards && backTripped) state = EEState.INDEXING_BWD;
+            else if (!isForwards && frontTripped) state = EEState.INDEXING_FWD;
+            else state = EEState.OFF;
         });
     }
 
-    public Command outtake(BooleanSupplier isForwardsSupplier) {
+    public Command outtake() {
         return run(() -> {
-            boolean isForwards = isForwardsSupplier.getAsBoolean();
-
-            state = switch (mode) {
-                case VERTICAL_CORAL -> isForwards
-                        ? EEState.VERTICAL_CORAL_OUTTAKE_FWD
-                        : EEState.VERTICAL_CORAL_OUTTAKE_BWD;
-                case HORIZONTAL_CORAL -> EEState.HORIZONTAL_CORAL_OUTTAKE;
-                case ALGAE -> EEState.ALGAE_OUTTAKE;};
+            state = EEState.OUTTAKE;
         });
     }
 
-    public boolean hasCoral() {
-        return inputs.hasCoral;
+    public Command outtakeClassifier() {
+        return run(() -> {
+            state = EEState.OUTTAKE_CLASSIFIER;
+        });
     }
 
-    public boolean hasAlgae() {
-        return inputs.hasAlgae;
+    public boolean hasCrystal() {
+        return inputs.hasCrystal;
+    }
+
+    public boolean hasGemstone() {
+        return inputs.hasGemstone;
     }
 
     public boolean hasGamePiece() {
-        return hasCoral() || hasAlgae();
+        return hasCrystal() || hasGemstone();
     }
 }

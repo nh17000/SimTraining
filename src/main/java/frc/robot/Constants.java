@@ -82,7 +82,7 @@ public final class Constants {
         public static final Translation3d WRIST_ZERO = new Translation3d(0.368313, 0, 0.196875);
         public static final Translation3d WRIST_OFFSET = WRIST_ZERO.minus(STAGE0_ZERO);
 
-        public static final Transform3d CORAL_TRANSFORM = new Transform3d(
+        public static final Transform3d CRYSTAL_TRANSFORM = new Transform3d(
                 new Translation3d(Units.inchesToMeters(5.25), 0, 0)
                         .rotateBy(new Rotation3d(0, -Units.degreesToRadians(45), 0)),
                 new Rotation3d(0, -Units.degreesToRadians(125), 0));
@@ -92,8 +92,9 @@ public final class Constants {
                         .rotateBy(new Rotation3d(0, -Units.degreesToRadians(96), 0)),
                 new Rotation3d(0, 0, Units.degreesToRadians(90)));
 
-        public static final Transform3d ALGAE_TRANSFORM = new Transform3d(
-                new Translation3d(Units.inchesToMeters(16), 0, 0).rotateBy(CORAL_TRANSFORM.getRotation()),
-                Rotation3d.kZero);
+        public static final Transform3d GEMSTONE_TRANSFORM = new Transform3d(
+                new Translation3d(0, 0, 0.33)
+                        .rotateBy(new Rotation3d(0, -Units.degreesToRadians(5), 0)),
+                new Rotation3d(0, -Units.degreesToRadians(125), 0));
     }
 }

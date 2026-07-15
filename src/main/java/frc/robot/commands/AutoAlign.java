@@ -30,11 +30,11 @@ public class AutoAlign {
     }
 
     public Command caveAlignUpper(Drive drive) {
-        return caveAlign(drive, false);
+        return caveAlign(drive, true);
     }
 
     public Command caveAlignLower(Drive drive) {
-        return caveAlign(drive, true);
+        return caveAlign(drive, false);
     }
 
     private Command caveAlign(Drive drive, boolean isUpper) {
@@ -42,7 +42,7 @@ public class AutoAlign {
     }
 
     private Pose2d findCaveTargetPose(Pose2d currentPose, boolean isUpper) {
-        Pose2d tagPose = currentPose.nearest(FieldConstants.ALIGN_POSES);
+        Pose2d tagPose = currentPose.nearest(FieldConstants.CAVE_ALIGN_POSES);
 
         Rotation2d backwardsRotation = tagPose.getRotation();
         Rotation2d forwardsRotation = backwardsRotation.plus(Rotation2d.k180deg);
@@ -62,6 +62,14 @@ public class AutoAlign {
 
         return targetPose =
                 tagPose.transformBy(new Transform2d(offset, isForwards ? Rotation2d.k180deg : Rotation2d.kZero));
+    }
+
+    public Command classifierAlign(Drive drive) {
+        return new DriveToPose(drive, () -> robotSupplier.get().nearest(FieldConstants.CLASSIFIER_ALIGN_POSES), robotSupplier);
+    }
+
+    public Command jewelryAlign(Drive drive) {
+        return new DriveToPose(drive, () -> robotSupplier.get().nearest(FieldConstants.JEWELRY_ALIGN_POSES), robotSupplier);
     }
 
     @AutoLogOutput

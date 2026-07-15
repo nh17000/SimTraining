@@ -20,7 +20,6 @@ import frc.robot.util.crystalcaverns.GemstoneHandler;
 import frc.robot.util.crystalcaverns.MineSim;
 import frc.robot.util.crystalcaverns.CrystalOnFly;
 import frc.robot.util.crystalcaverns.GemstoneOnFly;
-
 import java.util.function.Supplier;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
@@ -30,9 +29,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private boolean hasCrystal = true;
-    private boolean hasAlgae = false;
-
-    private boolean horizontal = false;
+    private boolean hasGemstone = false;
 
     private Timer intakingTimer = new Timer();
 
@@ -63,7 +60,7 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private double crystalPos = INTAKE_POS;
 
     private final IntakeSimulation crystalGroundIntakeSim;
-    private final IntakeSimulation algaeGroundIntakeSim;
+    private final IntakeSimulation gemstoneGroundIntakeSim;
 
     private final TalonFXSimState leftSimState;
 
@@ -71,12 +68,22 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private Supplier<ChassisSpeeds> chassisSpeedsSupplier;
     private Supplier<Transform3d> wristTransformSupplier;
 
+    // private final LoggedTunableNumber x = new LoggedTunableNumber("Gemstone/x", 0.0);
+    // private final LoggedTunableNumber y = new LoggedTunableNumber("Gemstone/y", 0.0);
+    // private final LoggedTunableNumber z = new LoggedTunableNumber("Gemstone/z", 0.0);
+    // private final LoggedTunableNumber roll = new LoggedTunableNumber("Gemstone/r", 0.0);
+    // private final LoggedTunableNumber pitch = new LoggedTunableNumber("Gemstone/p", 0.0);
+    // private final LoggedTunableNumber yaw = new LoggedTunableNumber("Gemstone/yaw", 0.0);
+    // private final LoggedTunableNumber r2 = new LoggedTunableNumber("Gemstone/r2", 0.0);
+    // private final LoggedTunableNumber p2 = new LoggedTunableNumber("Gemstone/p2", 0.0);
+    // private final LoggedTunableNumber yaw2 = new LoggedTunableNumber("Gemstone/yaw2", 0.0);
+
     public EndEffectorIOSim(
             AbstractDriveTrainSimulation driveSimulation, Supplier<Transform3d> wristTransformSupplier) {
 
         crystalGroundIntakeSim = IntakeSimulation.OverTheBumperIntake(
                 "Crystal", driveSimulation, Inches.of(12), Inches.of(6), IntakeSimulation.IntakeSide.FRONT, 1);
-        algaeGroundIntakeSim = IntakeSimulation.OverTheBumperIntake(
+        gemstoneGroundIntakeSim = IntakeSimulation.OverTheBumperIntake(
                 "Gemstone", driveSimulation, Inches.of(12), Inches.of(6), IntakeSimulation.IntakeSide.FRONT, 1);
 
         this.poseSupplier = driveSimulation::getSimulatedDriveTrainPose;
@@ -94,8 +101,8 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         updateGamePieces(inputs.leftData.appliedVolts(), inputs.topData.appliedVolts());
         updateCANRangeSims();
 
-        inputs.hasCoral = hasCrystal;
-        inputs.hasAlgae = hasAlgae;
+        inputs.hasCrystal = hasCrystal;
+        inputs.hasGemstone = hasGemstone;
     }
 
     private void updateRollerSim(double dtSeconds) {
@@ -121,40 +128,59 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     }
 
     private void updateGamePieces(double leftVolts, double topVolts) {
-        if (Math.abs(leftVolts) < 0.1) { // algae
-            crystalGroundIntakeSim.stopIntake();
+        // if (Math.abs(leftVolts) < 0.1) { // gemstone
+        //     crystalGroundIntakeSim.stopIntake();
 
-            if (topVolts > 0.5) { // algae intake
-                if (getHeldAlgaeTransform().getMeasureZ().lt(Inches.of(16))) {
-                    // intake algae on the ground
-                    algaeGroundIntakeSim.startIntake();
-                } else { // intake algae on the reef
-                    algaeGroundIntakeSim.stopIntake();
-                    // intakeReefAlgae();
-                }
-            } else {
-                algaeGroundIntakeSim.stopIntake();
-                if (topVolts < -0.5) { // algae outtake
-                    shootAlgae();
-                }
-            }
-        } else { // crystal
-            horizontal = Math.abs(topVolts) > 0.5; // intake horizontally if top rollers running
-            algaeGroundIntakeSim.stopIntake();
+        //     if (topVolts > 0.5) { // gemstone intake
+        //         if (getHeldGemstoneTransform().getMeasureZ().lt(Inches.of(16))) {
+        //             // intake gemstone on the ground
+        //             gemstoneGroundIntakeSim.startIntake();
+        //         } else { // intake gemstone on the reef
+        //             gemstoneGroundIntakeSim.stopIntake();
+        //             intakeReefGemstone();
+        //         }
+        //     } else {
+        //         gemstoneGroundIntakeSim.stopIntake();
+        //         if (topVolts < -0.5) { // gemstone outtake
+        //             shootGemstone();
+        //         }
+        //     }
+        // } else { // crystal
+        //     horizontal = Math.abs(topVolts) > 0.5; // intake horizontally if top rollers running
+        //     gemstoneGroundIntakeSim.stopIntake();
 
-            if (leftVolts < -0.5) { // crystal intake
-                dropFromCrystalStation(); // drop crystal from the station
+        //     if (leftVolts < -0.5) { // crystal intake
+        //         dropFromCrystalStation(); // drop crystal from the station
 
-                if (getHeldCrystalTransform().getMeasureZ().lt(Inches.of(8))) {
-                    // intake crystal on the ground
-                    crystalGroundIntakeSim.startIntake();
-                } else { // intake crystal in the air
-                    crystalGroundIntakeSim.stopIntake();
-                    // intakeCrystalProjectiles();
-                }
-            } else {
+        //         if (getHeldCrystalTransform().getMeasureZ().lt(Inches.of(8))) {
+        //             // intake crystal on the ground
+        //             crystalGroundIntakeSim.startIntake();
+        //         } else { // intake crystal in the air
+        //             crystalGroundIntakeSim.stopIntake();
+        //             // intakeCrystalProjectiles();
+        //         }
+        //     } else {
+        //         crystalGroundIntakeSim.stopIntake();
+        //     }
+        // }
+
+        if (leftVolts < -0.5) { // intake
+            dropFromCrystalStation(); // drop crystal from the station
+
+            if (!hasCrystal && !hasGemstone && getHeldCrystalTransform().getMeasureZ().lt(Inches.of(8))) {
+                // intake crystal on the ground
+                crystalGroundIntakeSim.startIntake();
+                gemstoneGroundIntakeSim.startIntake();
+            } else { // intake crystal in the air
                 crystalGroundIntakeSim.stopIntake();
+                // intakeCrystalProjectiles();
+                gemstoneGroundIntakeSim.stopIntake();
+                intakeReefGemstone();
             }
+        } else if (leftVolts > 0.5) {
+            crystalGroundIntakeSim.stopIntake();
+            gemstoneGroundIntakeSim.stopIntake();
+            shootGemstone();
         }
 
         if (hasCrystal != crystalGroundIntakeSim.getGamePiecesAmount() > 0) {
@@ -164,15 +190,15 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
             } else crystalGroundIntakeSim.addGamePieceToIntake(); // preload
         }
 
-        if (hasAlgae != algaeGroundIntakeSim.getGamePiecesAmount() > 0) {
-            if (!hasAlgae) hasAlgae = true; // game piece intook
-            else algaeGroundIntakeSim.addGamePieceToIntake(); // preload
+        if (hasGemstone != gemstoneGroundIntakeSim.getGamePiecesAmount() > 0) {
+            if (!hasGemstone) hasGemstone = true; // game piece intook
+            else gemstoneGroundIntakeSim.addGamePieceToIntake(); // preload
         }
 
         if (crystalPos > MAX_POS - POS_TOLERANCE) {
-            shootCrystal(false);
+            shootCrystal(false, topVolts > 0.5);
         } else if (crystalPos < MIN_POS + POS_TOLERANCE) {
-            shootCrystal(true);
+            shootCrystal(true, topVolts > 0.5);
         }
 
         visualizeGamePieces();
@@ -181,7 +207,7 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private void updateCANRangeSims() {
         boolean isFrontTripped = hasCrystal && MathUtil.isNear(FRONT_CAN_RANGE_POS, crystalPos, CORAL_LENGTH / 2.0);
         boolean isBackTripped = hasCrystal && MathUtil.isNear(BACK_CAN_RANGE_POS, crystalPos, CORAL_LENGTH / 2.0);
-        boolean areSidesTripped = hasCrystal && horizontal;
+        boolean areSidesTripped = false; // hasCrystal && horizontal;
 
         frontCANRange.getSimState().setDistance(isFrontTripped ? 0.01 : 1);
         backCANRange.getSimState().setDistance(isBackTripped ? 0.01 : 1);
@@ -215,13 +241,13 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         }
     }
 
-    private void intakeReefAlgae() {
-        if (hasAlgae) return; // max 1 algae
+    private void intakeReefGemstone() {
+        if (hasGemstone) return; // max 1 gemstone
 
-        GemstoneHandler.getInstance().intake(getHeldAlgaePose()).ifPresent(algae -> {
+        GemstoneHandler.getInstance().intake(getHeldGemstonePose()).ifPresent(gemstone -> {
             intookGamePiecePrevPose =
-                    new Pose3d(algae.getTranslation(), getHeldAlgaePose().getRotation());
-            hasAlgae = true;
+                    new Pose3d(gemstone.getTranslation(), getHeldGemstonePose().getRotation());
+            hasGemstone = true;
             intakingTimer.restart();
         });
     }
@@ -244,7 +270,7 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         Logger.recordOutput(
                 "FieldSimulation/Held Crystal", hasCrystal ? interpolateHeldPose(getHeldCrystalPose()) : Pose3d.kZero);
         Logger.recordOutput(
-                "FieldSimulation/Held Gemstone", hasAlgae ? interpolateHeldPose(getHeldAlgaePose()) : Pose3d.kZero);
+                "FieldSimulation/Held Gemstone", hasGemstone ? interpolateHeldPose(getHeldGemstonePose()) : Pose3d.kZero);
     }
 
     private Pose3d interpolateHeldPose(Pose3d targetPose) {
@@ -261,22 +287,14 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     }
 
     private Transform3d getHeldCrystalTransform() {
-        return horizontal ? getHeldHorizontalCrystalTransform() : getHeldVerticalCrystalTransform();
-    }
-
-    private Transform3d getHeldVerticalCrystalTransform() {
         return wristTransformSupplier
                 .get()
-                .plus(VisualizerConstants.CORAL_TRANSFORM)
+                .plus(VisualizerConstants.CRYSTAL_TRANSFORM)
                 .plus(new Transform3d(crystalPos, 0, 0, Rotation3d.kZero));
     }
 
-    private Transform3d getHeldHorizontalCrystalTransform() {
-        return wristTransformSupplier.get().plus(VisualizerConstants.HORIZONTAL_CORAL_TRANSFORM);
-    }
-
-    private Transform3d getHeldAlgaeTransform() {
-        return wristTransformSupplier.get().plus(VisualizerConstants.ALGAE_TRANSFORM);
+    private Transform3d getHeldGemstoneTransform() {
+        return wristTransformSupplier.get().plus(VisualizerConstants.GEMSTONE_TRANSFORM);
     }
 
     private Pose3d getHeldCrystalPose() {
@@ -285,18 +303,19 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
         return robotPose.transformBy(crystalTransform);
     }
 
-    private Pose3d getHeldAlgaePose() {
+    private Pose3d getHeldGemstonePose() {
         Pose3d robotPose = new Pose3d(poseSupplier.get());
-        return robotPose.transformBy(getHeldAlgaeTransform());
+        return robotPose.transformBy(getHeldGemstoneTransform());
     }
 
-    private void shootCrystal(boolean forwards) {
+    private void shootCrystal(boolean forwards, boolean classifier) {
         if (!hasCrystal) return;
 
         Transform3d eeTransform = getHeldCrystalTransform();
 
         double ejectVel = rollerSim.getAngularVelocityRadPerSec() * EndEffectorConstants.LR_RADIUS;
-        if (horizontal) ejectVel = -Math.abs(ejectVel);
+        // if (horizontal) ejectVel = -Math.abs(ejectVel);
+        if (!classifier) ejectVel *= 0; // how to rotate velocity vector
 
         SimulatedArena.getInstance()
                 .addGamePieceProjectile(new CrystalOnFly(
@@ -305,17 +324,17 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
                         chassisSpeedsSupplier.get(),
                         poseSupplier.get().getRotation(),
                         eeTransform.getMeasureZ(),
-                        MetersPerSecond.of(ejectVel * 0), // how to rotate velocity vector
+                        MetersPerSecond.of(ejectVel),
                         eeTransform.getRotation().getMeasureAngle()));
 
         hasCrystal = false;
         crystalGroundIntakeSim.obtainGamePieceFromIntake();
     }
 
-    private void shootAlgae() {
-        if (!hasAlgae) return;
+    private void shootGemstone() {
+        if (!hasGemstone) return;
 
-        Transform3d eeTransform = getHeldAlgaeTransform();
+        Transform3d eeTransform = getHeldGemstoneTransform();
 
         SimulatedArena.getInstance()
                 .addGamePieceProjectile(new GemstoneOnFly(
@@ -324,11 +343,11 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
                         chassisSpeedsSupplier.get(),
                         poseSupplier.get().getRotation(),
                         eeTransform.getMeasureZ(),
-                        MetersPerSecond.of(2.910),
+                        MetersPerSecond.of(2.910 * 0),
                         eeTransform.getRotation().getMeasureAngle()));
 
-        hasAlgae = false;
-        algaeGroundIntakeSim.obtainGamePieceFromIntake();
+        hasGemstone = false;
+        gemstoneGroundIntakeSim.obtainGamePieceFromIntake();
     }
 
     private void dropFromCrystalStation() {

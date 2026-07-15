@@ -12,30 +12,17 @@ import frc.robot.util.PhoenixUtil;
 public class ArmConstants {
     public enum ArmState {
         STOWED(0, 0, 125),
-        // L4(68, 39.75, 45),
-        L4(40.5, 38.5, -40), // upper crystal
-        // L3(56, 19, 95),
-        L3(45.5, 13.5, -45.5), // lower crystal
-        L2(38, 9.45, 118),
-        L1_FRONT(37, 0, 0),
-        L1_BASE(35, 0, -8),
-        L1_TOP(43, 0, -20),
-        // L4_BACKWARDS(97, 41.5, 146),
-        L4_BACKWARDS(120, 41.5, 60),
-        // L3_BACKWARDS(100, 11, 115),
-        L3_BACKWARDS(120, 5, 60),
-        L2_BACKWARDS(107, 0, 124),
-        CORAL_STATION(67, 5.6, -31),
-        NET(90, 40.5, -20),
-        NET_PREP(90, 35, -20),
-        VERTICAL_CORAL_GROUND_INTAKE(0, 0, -2),
-        HORIZONTAL_CORAL_GROUND_INTAKE(4, 0, -10),
-        ALGAE_GROUND_INTAKE(32, 0, -85),
-        LOW_ALGAE(45, 3, -15),
-        LOW_ALGAE_BACKWARDS(107, 0, 80),
-        HIGH_ALGAE(63, 14, -30),
+        UPPER_CRYSTAL(40.5, 38.5, -40.5),
+        LOWER_CRYSTAL(45.5, 13.5, -45.5),
+        UPPER_CRYSTAL_BACKWARDS(120, 41.5, 60),
+        LOWER_CRYSTAL_BACKWARDS(120, 5, 60),
+        JEWELRY(20, 2.5, -15),
+        JEWELRY_PREP(15, 2.5, -15),
+        GROUND_INTAKE(0, 0, -2),
+        GEMSTONE_INTAKE(29.5, 42.5, -29.5),
+        TOP_CLASSIFIER(64, 14, -45),
+        BOTTOM_CLASSIFIER(50, 2.5, -35),
         HIGH_ALGAE_BACKWARDS(100, 16, 80),
-        PROCESSOR(0, 0, 25),
         HOLD_CORAL(60, 0, 80),
         HOLD_ALGAE(90, 0, -20),
         TUNABLE(0, 0, 125);
@@ -49,44 +36,53 @@ public class ArmConstants {
                     Units.degreesToRadians(wristDegrees));
         }
 
-        public static ArmState of(int level, GamePieceMode mode, boolean isForwards) {
-            return switch (mode) {
-                case VERTICAL_CORAL -> switch (level) {
-                    case 4 -> isForwards ? ArmState.L4 : ArmState.L4_BACKWARDS;
-                    case 3 -> isForwards ? ArmState.L3 : ArmState.L3_BACKWARDS;
-                    case 2 -> isForwards ? ArmState.L2 : ArmState.L2_BACKWARDS;
-                    default -> ArmState.STOWED;
-                };
-                case HORIZONTAL_CORAL -> switch (level) {
-                    case 4 -> ArmState.L1_TOP;
-                    case 3 -> ArmState.L1_FRONT;
-                    case 2 -> ArmState.L1_BASE;
-                    default -> ArmState.STOWED;
-                };
-                case ALGAE -> switch (level) {
-                    case 4 -> ArmState.NET_PREP;
-                    case 3 -> isForwards ? ArmState.HIGH_ALGAE : ArmState.HIGH_ALGAE_BACKWARDS;
-                    case 2 -> isForwards ? ArmState.LOW_ALGAE : ArmState.LOW_ALGAE_BACKWARDS;
-                    case 1 -> ArmState.PROCESSOR;
-                    default -> ArmState.STOWED;
-                };
+        public static ArmState of(int level, boolean isForwards) {
+            // return switch (mode) {
+            //     case VERTICAL_CORAL -> switch (level) {
+            //         case 4 -> isForwards ? ArmState.L4 : ArmState.L4_BACKWARDS;
+            //         case 3 -> isForwards ? ArmState.L3 : ArmState.L3_BACKWARDS;
+            //         case 2 -> isForwards ? ArmState.L2 : ArmState.L2_BACKWARDS;
+            //         default -> ArmState.STOWED;
+            //     };
+            //     case HORIZONTAL_CORAL -> switch (level) {
+            //         case 4 -> ArmState.L1_TOP;
+            //         case 3 -> ArmState.L1_FRONT;
+            //         case 2 -> ArmState.L1_BASE;
+            //         default -> ArmState.STOWED;
+            //     };
+            //     case ALGAE -> switch (level) {
+            //         case 4 -> ArmState.NET_PREP;
+            //         case 3 -> isForwards ? ArmState.HIGH_ALGAE : ArmState.HIGH_ALGAE_BACKWARDS;
+            //         case 2 -> isForwards ? ArmState.LOW_ALGAE : ArmState.LOW_ALGAE_BACKWARDS;
+            //         case 1 -> ArmState.PROCESSOR;
+            //         default -> ArmState.STOWED;
+            //     };
+            // };
+            return switch (level) {
+                case 4 -> isForwards ? ArmState.UPPER_CRYSTAL : ArmState.UPPER_CRYSTAL_BACKWARDS;
+                case 3 -> isForwards ? ArmState.LOWER_CRYSTAL : ArmState.LOWER_CRYSTAL_BACKWARDS;
+                case 2 -> isForwards ? ArmState.GEMSTONE_INTAKE : ArmState.HIGH_ALGAE_BACKWARDS;
+                case 1 -> isForwards ? ArmState.TOP_CLASSIFIER : ArmState.BOTTOM_CLASSIFIER;
+                default -> ArmState.STOWED;
             };
         }
 
         public static ArmState groundIntake(GamePieceMode mode) {
-            return switch (mode) {
-                case VERTICAL_CORAL -> ArmState.VERTICAL_CORAL_GROUND_INTAKE;
-                case HORIZONTAL_CORAL -> ArmState.HORIZONTAL_CORAL_GROUND_INTAKE;
-                case ALGAE -> ArmState.ALGAE_GROUND_INTAKE;
-            };
+            return ArmState.GROUND_INTAKE;
+            // return switch (mode) {
+            //     case VERTICAL_CORAL -> ArmState.VERTICAL_CORAL_GROUND_INTAKE;
+            //     case HORIZONTAL_CORAL -> ArmState.HORIZONTAL_CORAL_GROUND_INTAKE;
+            //     case ALGAE -> ArmState.ALGAE_GROUND_INTAKE;
+            // };
         }
 
         public static ArmState hold(GamePieceMode mode) {
-            return switch (mode) {
-                case VERTICAL_CORAL -> ArmState.HOLD_CORAL;
-                case HORIZONTAL_CORAL -> ArmState.L1_BASE;
-                case ALGAE -> ArmState.HOLD_ALGAE;
-            };
+            return ArmState.HOLD_CORAL;
+            // return switch (mode) {
+            //     case VERTICAL_CORAL -> ArmState.HOLD_CORAL;
+            //     case HORIZONTAL_CORAL -> ArmState.L1_BASE;
+            //     case ALGAE -> ArmState.HOLD_ALGAE;
+            // };
         }
     }
 

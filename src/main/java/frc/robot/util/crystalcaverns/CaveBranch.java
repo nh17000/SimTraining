@@ -22,7 +22,6 @@ import org.ironmaple.simulation.Goal;
  * instead should be used via a {@link CaveSim} which will handle an entire cave.
  */
 public class CaveBranch extends Goal {
-
     public final int level; // 0 or 1
     public final int column; // 0 to 7
 
@@ -45,45 +44,6 @@ public class CaveBranch extends Goal {
         for (CaveBranch branch : allInstances) branch.updateRotationChecker();
     }
 
-    // public static final Translation2d origin =
-    //         new Translation2d(FieldMirroringUtils.FIELD_WIDTH / 2, FieldMirroringUtils.FIELD_HEIGHT / 2);
-    // public static final Translation2d[] branchesCenterPositionBlue = new Translation2d[] {
-    //     new Translation2d(-4.810, 0.164).plus(origin), // A
-    //     new Translation2d(-4.810, -0.164).plus(origin), // B
-    //     new Translation2d(-4.690, -0.373).plus(origin), // C
-    //     new Translation2d(-4.406, -0.538).plus(origin), // D
-    //     new Translation2d(-4.164, -0.537).plus(origin), // E
-    //     new Translation2d(-3.879, -0.374).plus(origin), // F
-    //     new Translation2d(-3.759, -0.164).plus(origin), // G
-    //     new Translation2d(-3.759, 0.164).plus(origin), // H
-    //     new Translation2d(-3.880, 0.373).plus(origin), // I
-    //     new Translation2d(-4.164, 0.538).plus(origin), // J
-    //     new Translation2d(-4.405, 0.538).plus(origin), // K
-    //     new Translation2d(-4.690, 0.374).plus(origin) // L
-    // };
-
-    // public static final Translation3d[] heights = new Translation3d[] {
-    //     new Translation3d(0, 0, 0.45),
-    //     new Translation3d(0, 0, 0.79),
-    //     new Translation3d(0, 0, 1.19),
-    //     new Translation3d(0, 0, 1.78)
-    // };
-
-    // public static final Rotation3d flip90 = new Rotation3d(0, 0, Math.PI / 2);
-
-    // public static final Translation2d[] branchesCenterPositionRed = Arrays.stream(branchesCenterPositionBlue)
-    //         .map(FieldMirroringUtils::flip)
-    //         .toArray(Translation2d[]::new);
-
-    // public static final Rotation2d[] branchesFacingOutwardsBlue = new Rotation2d[] {
-    //     Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(180), // A and B
-    //     Rotation2d.fromDegrees(240), Rotation2d.fromDegrees(240), // C and D
-    //     Rotation2d.fromDegrees(300), Rotation2d.fromDegrees(300), // E and F
-    //     Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0), // G and H
-    //     Rotation2d.fromDegrees(60), Rotation2d.fromDegrees(60), // I and J
-    //     Rotation2d.fromDegrees(120), Rotation2d.fromDegrees(120), // K and L
-    // };
-
     /**
      *
      *
@@ -95,15 +55,6 @@ public class CaveBranch extends Goal {
      * @return The pose of a cave branch with the specified stats.
      */
     public static Translation3d getPoseOfBranchAt(boolean isBlue, int level, int col) {
-        // Translation3d branchCenterPosition = isBlue
-        //         ? new Translation3d(FieldConstants.BLUE_LOWER_BRANCHES[col])
-        //         : new Translation3d(FieldConstants.RED_LOWER_BRANCHES[col]);
-
-        // return branchCenterPosition
-        //         // .plus(level > 0 ? FieldConstants.UPPER_BRANCH_HEIGHT : FieldConstants.LOWER_BRANCH_HEIGHT);
-        //         // .plus(new Translation3d(0.255, 0, 0).rotateBy(new Rotation3d(branchesFacingOutwardsBlue[col])));
-        //         .plus(new Translation3d(0.255, 0, level > 0 ? FieldConstants.UPPER_BRANCH_HEIGHT : FieldConstants.LOWER_BRANCH_HEIGHT));
-
         Translation2d temp;
         double h;
         if (level == 0) {
@@ -115,10 +66,6 @@ public class CaveBranch extends Goal {
         }
         return new Translation3d(temp.getX(), temp.getY(), h);
     }
-
-    // public static final Rotation2d[] branchesFacingOutwardsRed = Arrays.stream(branchesFacingOutwardsBlue)
-    //         .map(FieldMirroringUtils::flip)
-    //         .toArray(Rotation2d[]::new);
 
     private static final int MIN_LEVEL = 0;
     private static final int MAX_LEVEL = 1;
@@ -136,13 +83,12 @@ public class CaveBranch extends Goal {
     public CaveBranch(CrystalCavernsArena arena, boolean isBlue, int level, int column) {
         super(
                 arena,
-                Inches.of(11),
-                Inches.of(11),
-                Inches.of(11),
+                Inches.of(7),
+                Inches.of(7),
+                Inches.of(9.875),
                 "Crystal",
                 getPoseOfBranchAt(isBlue, level, column),
                 isBlue,
-                // level == 0 ? 2 : 1,
                 4,
                 false);
 
@@ -169,16 +115,7 @@ public class CaveBranch extends Goal {
      * <p>This method is called during construction and whenever the static angle tolerance is changed.
      */
     private void updateRotationChecker() {
-        switch (level) {
-            case 0, 1 -> {
-                Rotation3d targetAngle = new Rotation3d(
-                        Degrees.zero(),
-                        Degrees.zero(),
-                        Degrees.zero());
-                setNeededAngle(targetAngle, angleTolerance);
-            }
-            // case 3 -> setNeededAngle(new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero()), angleTolerance);
-        } // case 0 uses default anyRotation() from parent
+        setNeededAngle(Rotation3d.kZero, angleTolerance);
     }
 
     /**
@@ -189,19 +126,7 @@ public class CaveBranch extends Goal {
      * @return This position of this branch as a pose3d.
      */
     public Pose3d getPose() {
-        Rotation3d facing = new Rotation3d(
-                0,
-                // level == 1 || level == 2 ? -35 * Math.PI / 180 : 0,
-                0,
-                //(isBlue ? branchesFacingOutwardsBlue : branchesFacingOutwardsRed)[column].getRadians()
-                0
-                );
-
-        // if (level == 0) {
-        //     facing = facing.plus(flip90);
-        // }
-
-        return new Pose3d(position, facing);
+        return new Pose3d(position, Rotation3d.kZero);
     }
 
     private static final int[] AUTO_POINTS_BY_LEVEL = {2, 3};

@@ -16,8 +16,8 @@ public interface EndEffectorIO {
         public SensorData frontRightData = new SensorData();
         public SensorData backData = new SensorData();
 
-        public boolean hasCoral = false;
-        public boolean hasAlgae = false;
+        public boolean hasCrystal = false;
+        public boolean hasGemstone = false;
     }
 
     default void updateInputs(EndEffectorIOInputs inputs) {}

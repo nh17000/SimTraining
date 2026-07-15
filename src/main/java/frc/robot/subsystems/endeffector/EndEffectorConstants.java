@@ -12,16 +12,11 @@ import frc.robot.Constants.Mode;
 
 public class EndEffectorConstants {
     public enum EEState {
-            VERTICAL_CORAL_INTAKE(-4, 0),
-            VERTICAL_CORAL_OUTTAKE_FWD(-12, 0),
-            VERTICAL_CORAL_OUTTAKE_BWD(12, 0),
-            HORIZONTAL_CORAL_INTAKE(-4, 4),
-            HORIZONTAL_CORAL_OUTTAKE(2, 2),
-            ALGAE_INTAKE(0, 8),
-            ALGAE_OUTTAKE(0, -12),
+            INTAKE(-4, 0),
+            OUTTAKE(12, 0),
+            OUTTAKE_CLASSIFIER(12, 6),
             INDEXING_FWD(-2, 0),
             INDEXING_BWD(2, 0),
-            INDEXING_HORIZONTAL(0, -1), // todo: left & right
             OFF(0, 0);
 
             public final double leftVolts;
@@ -36,9 +31,8 @@ public class EndEffectorConstants {
         }
 
         public enum GamePieceMode {
-            HORIZONTAL_CORAL,
-            VERTICAL_CORAL,
-            ALGAE
+            CLASSIFIER,
+            NONCLASSIFIER
         }
 
         public static final TalonFXConfiguration getLRConfigs() {

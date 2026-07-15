@@ -34,20 +34,33 @@ public class CrystalCavernsArena extends SimulatedArena {
                 super.addBorderLine(RED_CAVE_EXIT_TRUSS_1_CORNERS[i], (RED_CAVE_EXIT_TRUSS_1_CORNERS[(i + 1) % 4]));
                 super.addBorderLine(RED_CAVE_EXIT_TRUSS_2_CORNERS[i], (RED_CAVE_EXIT_TRUSS_2_CORNERS[(i + 1) % 4]));
             }
+
+            // jewelry
+            for (int i = 0; i < 6; i++) {
+                super.addBorderLine(JEWELRY_VORTICES[i], (JEWELRY_VORTICES[(i + 1) % 6]));
+            }
         }
     }
 
     public final CaveSim blueCaveSim;
     public final CaveSim redCaveSim;
+    private final GemstoneHandler gemstoneHandler;
 
     public CrystalCavernsArena() {
         super(new CrystalFieldObstaclesMap());
 
         blueCaveSim = new CaveSim(this, true);
         redCaveSim = new CaveSim(this, false);
+        gemstoneHandler = GemstoneHandler.getInstance();
 
         super.addCustomSimulation(blueCaveSim);
         super.addCustomSimulation(redCaveSim);
+    }
+
+    @Override
+    protected void simulationSubTick(int subTickNum) {
+        super.simulationSubTick(subTickNum);
+        gemstoneHandler.periodic();
     }
 
     @Override
@@ -63,6 +76,8 @@ public class CrystalCavernsArena extends SimulatedArena {
         if (type.equals("Crystal")) {
             redCaveSim.draw(poses);
             blueCaveSim.draw(poses);
+        } else if (type.equals("Gemstone")) {
+            gemstoneHandler.draw(poses);
         }
 
         return poses;
@@ -73,5 +88,6 @@ public class CrystalCavernsArena extends SimulatedArena {
         super.clearGamePieces();
         redCaveSim.clearCave();
         blueCaveSim.clearCave();
+        gemstoneHandler.reset();
     }
 }

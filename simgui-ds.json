@@ -37,10 +37,10 @@
       "axisCount": 6,
       "buttonCount": 10,
       "buttonKeys": [
-        90,
-        88,
-        67,
-        86,
+        85,
+        79,
+        73,
+        80,
         340,
         75,
         -1,
@@ -62,10 +62,10 @@
       "axisCount": 5,
       "buttonCount": 8,
       "buttonKeys": [
-        85,
-        79,
-        73,
-        80,
+        -1,
+        -1,
+        -1,
+        -1,
         59,
         39,
         45,
@@ -104,6 +104,7 @@
     {
       "guid": "Keyboard0"
     },
+    {},
     {
       "guid": "Keyboard1"
     }

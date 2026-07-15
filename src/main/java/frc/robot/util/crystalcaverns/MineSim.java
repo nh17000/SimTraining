@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
-// HP Station
+// Crystal Station
 public class MineSim {
     public static double lastDropTime = 0;
 
@@ -27,7 +27,7 @@ public class MineSim {
         if (addRandomness) {
             gamePiece = new CrystalOnFly(
                     stationPose.getTranslation(),
-                    new Translation2d(0, Math.random() * 3 - 1.5),
+                    new Translation2d(0, Math.random() * 1.5 - 0.75),
                     new ChassisSpeeds(),
                     stationPose.getRotation().plus(Rotation2d.fromDegrees(Math.random() * 30 - 15)),
                     Meters.of(1),
