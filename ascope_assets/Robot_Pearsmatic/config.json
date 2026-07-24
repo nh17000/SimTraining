@@ -1,6 +1,7 @@
 {
-  "name": "Spectre",
-  "sourceUrl": "https://www.chiefdelphi.com/t/2910-cad-and-tech-binder-release-2025/500310",
+  "name": "Pearsmatic",
+  "isFTC": false,
+  "disableSimplification": true,
   "rotations": [
     {
       "axis": "x",
@@ -8,7 +9,7 @@
     },
     {
       "axis": "z",
-      "degrees": 90
+      "degrees": 270
     }
   ],
   "position": [
@@ -16,7 +17,17 @@
     0,
     0
   ],
-  "cameras": [],
+  "cameras": [
+    {
+      "name": "limelight-glow",
+      "rotations": {
+        "axis": "z",
+        "degrees": 180
+      },
+      "resolution": [1200, 1200],
+      "fov": 80
+    }
+  ],
   "components": [
     {
       "zeroedRotations": [
@@ -26,13 +37,13 @@
         },
         {
           "axis": "z",
-          "degrees": 90
+          "degrees": 270
         }
       ],
       "zeroedPosition": [
-        0.26035,
+        0.241300,
         0.0,
-        -0.32385
+        -0.377825
       ]
     },
     {
@@ -43,13 +54,13 @@
         },
         {
           "axis": "z",
-          "degrees": 90
+          "degrees": 270
         }
       ],
       "zeroedPosition": [
-        0.26035,
+        0.241300,
         0.0,
-        -0.32385
+        -0.377825
       ]
     },
     {
@@ -60,13 +71,13 @@
         },
         {
           "axis": "z",
-          "degrees": 90
+          "degrees": 270
         }
       ],
       "zeroedPosition": [
-        0.26035,
+        -0.535083,
         0.0,
-        -0.32385
+        -0.238125
       ]
     },
     {
@@ -77,13 +88,13 @@
         },
         {
           "axis": "z",
-          "degrees": 90
+          "degrees": 270
         }
       ],
       "zeroedPosition": [
-        -0.368313,
         0.0,
-        -0.196875
+        0.0,
+        0.0
       ]
     },
     {
@@ -94,13 +105,13 @@
         },
         {
           "axis": "z",
-          "degrees": 90
+          "degrees": 270
         }
       ],
       "zeroedPosition": [
-        0.26035,
         0.0,
-        -0.32385
+        0.0,
+        0.0
       ]
     }
   ]

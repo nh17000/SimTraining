@@ -7,10 +7,9 @@
       "height": 976,
       "state": {
         "sidebar": {
-          "width": 337,
+          "width": 213,
           "expanded": [
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/FieldSimulation",
             "/AdvantageKit/Turret/TurretData",
             "/RealOutputs",
             "/RealOutputs/LoggedRobot",
@@ -21,12 +20,20 @@
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs/RobotVisualizer",
             "/AdvantageKit/RealOutputs/GamePieceManager",
-            "/AdvantageKit/EndEffector",
-            "/AdvantageKit/RealOutputs/Arm",
             "/Tuning",
-            "/Tuning/Arm",
-            "/AdvantageKit/RealOutputs/EndEffector",
-            "/AdvantageKit/RealOutputs/DriveToPose"
+            "/Tuning/Gemstone",
+            "/AdvantageKit/RealOutputs/EnergyTracker",
+            "/AdvantageKit/RealOutputs/EnergyTracker/Energies",
+            "/AdvantageKit/Intake",
+            "/AdvantageKit/Intake/Pivot1MotorData",
+            "/AdvantageKit/Intake/Pivot2MotorData",
+            "/AdvantageKit/RealOutputs/Intake",
+            "/Tuning/Hood",
+            "/AdvantageKit/RealOutputs/EE",
+            "/AdvantageKit/RealOutputs/Odometry",
+            "/AdvantageKit/RealOutputs/FieldSimulation",
+            "/Tuning/Test",
+            "/Tuning/Arm"
           ]
         },
         "tabs": {
@@ -51,68 +58,102 @@
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
-                      "model": "Spectre"
+                      "model": "Pearsmatic"
                     }
                   },
                   {
                     "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Components",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Arm Components",
                     "logType": "Transform3d[]",
                     "visible": true,
                     "options": {}
                   },
                   {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Crystals",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "variant": "Crystal"
-                    }
-                  },
-                  {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Held Crystal",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {
-                      "variant": "Crystal"
-                    }
-                  },
-                  {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Gemstones",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "variant": "Gemstone"
-                    }
-                  },
-                  {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Held Gemstone",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {
-                      "variant": "Gemstone"
-                    }
+                    "type": "component",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Climber Components",
+                    "logType": "Transform3d[]",
+                    "visible": false,
+                    "options": {}
                   },
                   {
                     "type": "ghost",
                     "logKey": "NT:/AdvantageKit/RealOutputs/DriveToPose/Target",
                     "logType": "Pose2d",
-                    "visible": true,
+                    "visible": false,
                     "options": {
-                      "model": "Spectre",
-                      "color": "#00ff00"
+                      "model": "Duck Bot",
+                      "color": "#00ffff"
                     }
                   },
                   {
                     "type": "component",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Arm/Component Setpoints",
                     "logType": "Transform3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {}
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Green Crystals",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Green Crystal"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Yellow Crystals",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Yellow Crystal"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Orange Crystals",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Orange Crystal"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Pearple Crystals",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Purple Crystal"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Red Gemstones",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Red Gemstone"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Blue Gemstones",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Blue Gemstone"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Camera Crystals",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Yellow Crystal"
+                    }
                   }
                 ],
                 "game": "FRC:Crystal Caverns"
@@ -122,52 +163,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  11.615816879942063,
-                  5.147964428108289,
-                  0.10990967438912397
+                  10.317084241110782,
+                  3.8854847769841205,
+                  0.08977870240071863
                 ],
                 "cameraTarget": [
-                  4.087223209776657,
-                  0.24409043748174855,
-                  0.13808925811577294
+                  1.1692804254219986,
+                  -1.5876442759939249,
+                  0.027842229058728206
                 ]
               },
-              "controlsHeight": 275
-            },
-            {
-              "type": 1,
-              "title": "Line Graph",
-              "controller": {
-                "leftSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/EndEffector/Crystal Pos",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#2b66a2",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [],
-                "discreteSources": [],
-                "leftLockedRange": null,
-                "rightLockedRange": null,
-                "leftUnitConversion": {
-                  "autoTarget": null,
-                  "preset": null
-                },
-                "rightUnitConversion": {
-                  "autoTarget": null,
-                  "preset": null
-                },
-                "leftFilter": 0,
-                "rightFilter": 0
-              },
-              "controllerUUID": "zb2dggt4avo7uf4siq2nqn57tiqh1rlu",
-              "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 100
             },
             {
               "type": 8,

@@ -43,7 +43,7 @@
   ],
   "gamePieces": [
     {
-      "name": "Crystal",
+      "name": "Green Crystal",
       "rotations": [
         {
           "axis": "x",
@@ -58,7 +58,67 @@
       "stagedObjects": []
     },
     {
-      "name": "Gemstone",
+      "name": "Yellow Crystal",
+      "rotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        }
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "stagedObjects": []
+    },
+    {
+      "name": "Orange Crystal",
+      "rotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        }
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "stagedObjects": []
+    },
+    {
+      "name": "Purple Crystal",
+      "rotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        }
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "stagedObjects": []
+    },
+    {
+      "name": "Red Gemstone",
+      "rotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        }
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "stagedObjects": []
+    },
+    {
+      "name": "Blue Gemstone",
       "rotations": [
         {
           "axis": "x",

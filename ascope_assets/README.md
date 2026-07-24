@@ -1,7 +1,7 @@
 # AdvantageScope Quick Setup
 
 - Open AdvantageScope, and navigate to `Help > Show Assets Folder`
-- Copy the `Robot_Spectre/` and `Field3d_2026CrystalCaverns/` folders into the `userAssets/` directory
+- Copy the `Robot_Pearsmatic/` and `Field3d_2026CrystalCaverns/` folders into the `userAssets/` directory
 - Next, navigate to File > Import Layout
 - Select the most recent sim layout json
 
