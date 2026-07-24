@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.crystalcaverns.Colors.CrystalColor;
 
 public class FieldConstants {
     public static final double FIELD_LENGTH = Units.inchesToMeters(648);
@@ -55,8 +56,29 @@ public class FieldConstants {
         }
     }
 
+    public static final CrystalColor[] CRYSTAL_STARTING_COLORS = new CrystalColor[] {
+        CrystalColor.Camera, // wow
+        // CrystalColor.Yellow,
+        CrystalColor.Orange,
+        CrystalColor.Green,
+        CrystalColor.Pearple,
+        CrystalColor.Yellow,
+        CrystalColor.Orange,
+        CrystalColor.Green,
+        CrystalColor.Pearple,
+        CrystalColor.Pearple,
+        CrystalColor.Orange,
+        CrystalColor.Green,
+        CrystalColor.Yellow,
+        CrystalColor.Pearple,
+        CrystalColor.Orange,
+        CrystalColor.Green,
+        CrystalColor.Yellow,
+    };
+
     public static final Pose2d BLUE_CAVE_CENTER = CENTER.transformBy(new Transform2d(-4.129830, 0, Rotation2d.kZero));
     public static final Translation2d BLUE_CAVE_ORIGIN = BLUE_CAVE_CENTER.getTranslation();
+    public static final Translation2d RED_CAVE_ORIGIN = new Translation2d(FIELD_LENGTH - BLUE_CAVE_ORIGIN.getX(), BLUE_CAVE_ORIGIN.getY());
 
     public static final Translation2d[] BLUE_CAVE_VORTICES = new Translation2d[8];
     static {
@@ -118,17 +140,14 @@ public class FieldConstants {
     public static final Translation2d BLUE_MINE_CORNER_B = new Translation2d(
             FIELD_LENGTH, FIELD_WIDTH / 2.0 - 3.044640);
 
-    public static final List<Pose2d> MINES = new ArrayList<Pose2d>();
-    static {
-        MINES.add(new Pose2d(
+    public static final Pose2d BLUE_MINE = new Pose2d(
             (BLUE_MINE_CORNER_A.getX() + BLUE_MINE_CORNER_B.getX()) / 2.0,
             (BLUE_MINE_CORNER_A.getY() + BLUE_MINE_CORNER_B.getY()) / 2.0,
-            Rotation2d.fromDegrees(120)));
-        MINES.add(new Pose2d(
+            Rotation2d.fromDegrees(120));
+    public static final Pose2d RED_MINE = new Pose2d(
             (RED_MINE_CORNER_A.getX() + RED_MINE_CORNER_B.getX()) / 2.0,
             (RED_MINE_CORNER_A.getY() + RED_MINE_CORNER_B.getY()) / 2.0,
-            Rotation2d.fromDegrees(60)));
-    }
+            Rotation2d.fromDegrees(60));
 
     public static final Translation2d[] BLUE_CAVE_EXIT_TRUSS_1_CORNERS = new Translation2d[] {
             new Translation2d(-3.169557, 2.693090).plus(CENTER_ORIGIN),
@@ -163,10 +182,12 @@ public class FieldConstants {
 
     public static final List<Pose2d> CLASSIFIER_ALIGN_POSES = new ArrayList<>();
     static {
-        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.955, 5.2, Rotation2d.kZero));
-        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.955, 5.9, Rotation2d.kZero));
-        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.955, 5.2, Rotation2d.k180deg));
-        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.955, 5.9, Rotation2d.k180deg));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.7, 5.2, Rotation2d.kZero));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.7, 5.55, Rotation2d.kZero));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(15.7, 5.9, Rotation2d.kZero));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.7, 5.2, Rotation2d.k180deg));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.7, 5.55, Rotation2d.k180deg));
+        CLASSIFIER_ALIGN_POSES.add(new Pose2d(FIELD_LENGTH - 15.7, 5.9, Rotation2d.k180deg));
     }
 
     public static final List<Pose2d> JEWELRY_ALIGN_POSES = new ArrayList<>();
@@ -176,6 +197,9 @@ public class FieldConstants {
             JEWELRY_ALIGN_POSES.add(new Pose2d(CENTER_ORIGIN.plus(new Translation2d(BRANCH_TO_ROBOT, rot)), rot.plus(Rotation2d.k180deg)));
         }
     }
+
+    public static final Translation2d BLUE_PASSING_TARGET = new Translation2d(2.056, 5.414);
+    public static final Translation2d RED_PASSING_TARGET = new Translation2d(FIELD_LENGTH - 2.056, 5.414);
 
     // hero heist constants
     public static final double LOW_FOOTHILL_HEIGHT = Units.inchesToMeters(46.5);

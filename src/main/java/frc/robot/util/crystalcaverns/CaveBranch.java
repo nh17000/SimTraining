@@ -9,9 +9,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.crystalcaverns.Colors.CrystalColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.Goal;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *
@@ -24,6 +27,8 @@ import org.ironmaple.simulation.Goal;
 public class CaveBranch extends Goal {
     public final int level; // 0 or 1
     public final int column; // 0 to 7
+
+    public CrystalColor[] colors = new CrystalColor[4];
 
     private static Angle angleTolerance = Degrees.of(99999); // temp 
     private static final List<CaveBranch> allInstances = new ArrayList<>();
@@ -103,6 +108,17 @@ public class CaveBranch extends Goal {
         // Set initial rotation checker
         updateRotationChecker();
 
+        this.rotationChecker = new RotationChecker() {
+            @Override
+            public boolean isValidRotation(GamePiece gamePiece) {
+                int i = gamePieceCount;
+                if (gamePiece instanceof CrystalOnFly crystal) {
+                    colors[i] = crystal.color;
+                }
+                return true;
+            }
+        };
+
         // Register this instance for future tolerance updates
         allInstances.add(this);
     }
@@ -146,6 +162,14 @@ public class CaveBranch extends Goal {
     public void draw(List<Pose3d> drawList) {
         for (int i = 0; i < this.gamePieceCount; i++) {
             drawList.add(getPose().transformBy(new Transform3d(0, 0, Inches.of(2 * i + 1).in(Meters), Rotation3d.kZero)));
+        }
+    }
+    
+    public void drawByColor(List<Pose3d> drawList, CrystalColor color) {
+        for (int i = 0; i < this.gamePieceCount; i++) {
+            if (colors[i] == color) {
+                drawList.add(getPose().transformBy(new Transform3d(0, 0, Inches.of(2 * i + 1).in(Meters), Rotation3d.kZero)));
+            }
         }
     }
 }

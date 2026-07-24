@@ -17,14 +17,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.DriveCommands;
@@ -39,9 +39,17 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffectorIOReal;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.launcher.LauncherIO;
+import frc.robot.subsystems.launcher.LauncherIOReal;
+import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.vision.*;
+import frc.robot.util.crystalcaverns.Colors.CrystalColor;
+import frc.robot.util.Cameras;
 import frc.robot.util.crystalcaverns.CrystalCavernsArena;
-import java.util.EnumSet;
+import frc.robot.util.crystalcaverns.FieldConstants;
+import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.Set;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -63,6 +71,7 @@ public class RobotContainer {
     private final Vision vision;
     private final Arm arm;
     private final EndEffector endEffector;
+    private final Launcher launcher;
 
     public final RobotVisualizer visualizer;
 
@@ -72,12 +81,15 @@ public class RobotContainer {
 
     // Controller
     private static final CommandXboxController controller = new CommandXboxController(0);
-    // private static final CommandXboxController opController = new CommandXboxController(1);
+    private static final CommandXboxController opController = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
-    private Runnable gamePieceVis;
+//     private Runnable gamePieceVis = () -> {};
+
+    private Supplier<Optional<Pose3d>> heldCrystalPoseSupplier;
+    private Supplier<CrystalColor> heldCrystalColorSupplier;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -100,6 +112,7 @@ public class RobotContainer {
                         new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
                 arm = new Arm(new ArmIOReal());
                 endEffector = new EndEffector(new EndEffectorIOReal());
+                launcher = new Launcher(new LauncherIOReal());
                 align = new AutoAlign(drive::getPose);
 
                 break;
@@ -126,21 +139,21 @@ public class RobotContainer {
                                 driveSimulation.getModules()[3]),
                         driveSimulation::setSimulationWorldPose);
                 vision = new Vision(
-                        drive // ,
-                              // new VisionIOPhotonVisionSim(
-                              // camera0Name, robotToCamera0,
-                              // driveSimulation::getSimulatedDriveTrainPose),
-                              // new VisionIOPhotonVisionSim(
-                              // camera1Name, robotToCamera1,
-                              // driveSimulation::getSimulatedDriveTrainPose)
-                );
+                        drive, new VisionIOFake(driveSimulation::getSimulatedDriveTrainPose));
                 arm = new Arm(new ArmIOSim());
+                launcher = new Launcher(new LauncherIOSim());
 
                 EndEffectorIOSim eeSim = new EndEffectorIOSim(
-                        driveSimulation, () -> arm.getArmPosition().getWristTransform());
-                gamePieceVis = eeSim.getGamePieceVizRunnable();
+                        driveSimulation, 
+                        () -> arm.getArmPosition().getWristTransform(), 
+                        () -> arm.getWristAngleRads() > Units.degreesToRadians(125), 
+                        launcher::getAngularVelocityRadPerSec);
 
+                // gamePieceVis = eeSim.getGamePieceVizRunnable();
+                heldCrystalPoseSupplier = () -> eeSim.getHeldGamePiecePose();
+                heldCrystalColorSupplier = () -> eeSim.getHeldCrystalColor();
                 endEffector = new EndEffector(eeSim);
+
                 align = new AutoAlign(driveSimulation::getSimulatedDriveTrainPose);
 
                 break;
@@ -167,10 +180,14 @@ public class RobotContainer {
                 });
                 endEffector = new EndEffector(new EndEffectorIO() {
                 });
+                launcher = new Launcher(new LauncherIO() {
+                });
                 align = new AutoAlign(drive::getPose);
 
                 break;
         }
+
+        launcher.setDistanceToPassingTargetSupplier(align::getDistanceToPassingTarget);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -241,69 +258,53 @@ public class RobotContainer {
 
         controller
                 .leftBumper()
-                .whileTrue(arm.followStateSupplier(() -> ArmState.groundIntake(endEffector.getMode())))
-                .onFalse(arm.followStateSupplier(() -> ArmState.hold(endEffector.getMode())));
+                .whileTrue(arm.followStateSupplier(() -> ArmState.GROUND_INTAKE))
+                .onFalse(arm.followStateSupplier(() -> inAllianceZone() && endEffector.hasGamePiece() ? ArmState.HOLD : ArmState.STOWED));
 
         controller
                 .rightBumper()
-                .and(() -> arm.getState() == ArmState.JEWELRY_PREP)
-                .whileTrue(arm.applyState(ArmState.JEWELRY)
-                        .andThen(new WaitCommand(0.3))
-                        .andThen(endEffector.outtake()));
-
-        controller
-                .rightBumper()
-                .and(() -> arm.getState() == ArmState.BOTTOM_CLASSIFIER || arm.getState() == ArmState.TOP_CLASSIFIER)
-                .whileTrue(endEffector.outtakeClassifier());
-
-        controller
-                .rightBumper()
-                .and(() -> arm.getState() != ArmState.JEWELRY_PREP 
-                        && !(arm.getState() == ArmState.BOTTOM_CLASSIFIER || arm.getState() == ArmState.TOP_CLASSIFIER))
-                .whileTrue(endEffector.outtake());
-
-        controller.
-                a()
-                .and(endEffector::hasCrystal)
-                .onTrue(arm.followStateSupplier(() -> ArmState.of(1, align.isForwards())))
-                .whileTrue(align.classifierAlign(drive));
+                .whileTrue(new DeferredCommand(
+                        () -> switch (arm.getState()) {
+                                case HANDOFF -> endEffector.outtakeHandoff();
+                                case BOTTOM_CLASSIFIER, TOP_CLASSIFIER -> endEffector.outtakeClassifier();
+                                default -> endEffector.outtake(); 
+                        },
+                        Set.of(endEffector)))
+                .onFalse(launcher.setOff());
 
         controller
                 .a()
-                .and(endEffector::hasGemstone)
-                .onTrue(arm.followStateSupplier(() -> ArmState.JEWELRY_PREP))
-                .whileTrue(align.jewelryAlign(drive));
+                .onTrue(arm.applyState(ArmState.TOP_CLASSIFIER))
+                .whileTrue(align.classifierAlign(drive));
 
         controller
                 .x()
-                .onTrue(arm.followStateSupplier(
-                                () -> ArmState.of(2, align.isForwards())))
-                .whileTrue(align.caveAlignLower(drive));
+                .onTrue(arm.applyState(ArmState.HANDOFF).andThen(launcher.setSelfDirecting()))
+                .whileTrue(align.passAlign(
+                        drive, 
+                        () -> -controller.getLeftY(), 
+                        () -> -controller.getLeftX()));
+        
         controller
                 .b()
                 .onTrue(arm.followStateSupplier(
-                                () -> ArmState.of(3, align.isForwards())))
+                                () -> ArmState.of(1, align.isForwards())))
                 .whileTrue(align.caveAlignLower(drive));
+
         controller
                 .y()
                 .onTrue(arm.followStateSupplier(
-                                () -> ArmState.of(4, align.isForwards())))
+                                () -> ArmState.of(2, align.isForwards())))
                 .whileTrue(align.caveAlignUpper(drive));
 
-        new Trigger(() -> endEffector.hasCrystal() && shouldIndexCoral(arm.getState()))
-                .whileTrue(endEffector.index(align::isForwards));
-
         // --- Operator Controls ---
-        // opController.leftBumper()
-        //         .onTrue(new InstantCommand(() -> endEffector.setMode(GamePieceMode.VERTICAL_CORAL)));
-        // opController.rightBumper().onTrue(new InstantCommand(() -> endEffector.setMode(GamePieceMode.ALGAE)));
-        // opController.start()
-        //         .onTrue(new InstantCommand(() -> endEffector.setMode(GamePieceMode.HORIZONTAL_CORAL)));
-
-        // opController.povLeft().onTrue(arm.applyState(ArmState.TUNABLE));
-        // opController.povRight().onTrue(arm.applyState(ArmState.JEWELRY));
-        // opController.povUp().onTrue(arm.applyState(ArmState.TOP_CLASSIFIER));
-        // opController.povDown().onTrue(arm.applyState(ArmState.STOWED));
+        opController
+                .povUp()
+                .onTrue(arm.applyState(ArmState.MINE))
+                .whileTrue(align.mineAlign(drive));
+        opController.povLeft().onTrue(arm.applyState(ArmState.TUNABLE));
+        opController.povRight().onTrue(arm.applyState(ArmState.BOTTOM_CLASSIFIER));
+        opController.povDown().onTrue(arm.applyState(ArmState.STOWED));
     }
 
     /**
@@ -329,13 +330,11 @@ public class RobotContainer {
 
         SimulatedArena.getInstance().simulationPeriodic();
         Logger.recordOutput("FieldSimulation/Pose", new Pose3d(driveSimulation.getSimulatedDriveTrainPose()));
-        Logger.recordOutput(
-                "FieldSimulation/Crystals",
-                SimulatedArena.getInstance().getGamePiecesArrayByType("Crystal"));
-        Logger.recordOutput(
-                "FieldSimulation/Gemstones",
-                SimulatedArena.getInstance().getGamePiecesArrayByType("Gemstone"));
-        gamePieceVis.run();
+        if (SimulatedArena.getInstance() instanceof CrystalCavernsArena ccArena) {
+                ccArena.logGamePieces(heldCrystalPoseSupplier.get(), heldCrystalColorSupplier.get());
+        }
+        Cameras.log(driveSimulation.getSimulatedDriveTrainPose());
+        // gamePieceVis.run();
     }
 
     public static boolean isRedAlliance() {
@@ -346,13 +345,7 @@ public class RobotContainer {
         return false;
     }
 
-    private static final Set<ArmState> INDEXABLE_STATES = EnumSet.of(
-            ArmState.LOWER_CRYSTAL,
-            ArmState.UPPER_CRYSTAL,
-            ArmState.LOWER_CRYSTAL_BACKWARDS,
-            ArmState.UPPER_CRYSTAL_BACKWARDS);
-
-    public static boolean shouldIndexCoral(ArmState armState) {
-        return INDEXABLE_STATES.contains(armState);
+    public boolean inAllianceZone() {
+        return (drive.getPose().getX() > FieldConstants.FIELD_LENGTH / 2.0) == isRedAlliance();
     }
 }

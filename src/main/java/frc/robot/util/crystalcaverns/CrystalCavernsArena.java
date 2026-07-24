@@ -2,12 +2,16 @@ package frc.robot.util.crystalcaverns;
 
 import static frc.robot.util.crystalcaverns.FieldConstants.*;
 
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.util.crystalcaverns.Colors.CrystalColor;
+import frc.robot.util.crystalcaverns.Colors.GemstoneColor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.gamepieces.GamePiece;
+import org.littletonrobotics.junction.Logger;
 
 public class CrystalCavernsArena extends SimulatedArena {
     public static final class CrystalFieldObstaclesMap extends FieldMap {
@@ -65,8 +69,10 @@ public class CrystalCavernsArena extends SimulatedArena {
 
     @Override
     public void placeGamePiecesOnField() {
-        for (Pose2d notePosition : CRYSTAL_STARTING_POSITIONS)
-            super.addGamePiece(new CrystalOnField(notePosition.getTranslation()));
+        for (int i = 0; i < CRYSTAL_STARTING_POSITIONS.length; i++) {
+            super.addGamePiece(new CrystalOnField(
+                CRYSTAL_STARTING_POSITIONS[i].getTranslation(), CRYSTAL_STARTING_COLORS[i]));
+        }
     }
 
     @Override
@@ -89,5 +95,63 @@ public class CrystalCavernsArena extends SimulatedArena {
         redCaveSim.clearCave();
         blueCaveSim.clearCave();
         gemstoneHandler.reset();
+    }
+
+    public void logGamePieces(Optional<Pose3d> heldCrystalPose, CrystalColor heldCrystalColor) {
+        List<List<Pose3d>> crystalPoses = new ArrayList<List<Pose3d>>();
+        for (int i = 0; i < CrystalColor.values().length; i++) {
+            crystalPoses.add(new ArrayList<Pose3d>());
+        }
+        
+        List<GamePiece> crystals = getGamePiecesByType("Crystal");
+        for (GamePiece gp : crystals) {
+            if (gp instanceof CrystalOnField crystal) {
+                int colorIdx = crystal.color.index;
+                crystalPoses.get(colorIdx).add(crystal.getPose3d());
+            } else if (gp instanceof CrystalOnFly crystal) {
+                int colorIdx = crystal.color.index;
+                crystalPoses.get(colorIdx).add(crystal.getPose3d());
+            }
+        }
+
+        int idx = 0;
+        for (CrystalColor c : CrystalColor.values()) {
+            List<Pose3d> poses = crystalPoses.get(idx++);
+
+            redCaveSim.drawByColor(poses, c);
+            blueCaveSim.drawByColor(poses, c);
+
+            if (heldCrystalPose.isPresent() && heldCrystalColor == c) {
+                poses.add(heldCrystalPose.get());
+            }
+
+            Logger.recordOutput(
+                "FieldSimulation/" + c.toString() + " Crystals", 
+                poses.toArray(Pose3d[]::new));
+        }
+
+        List<GamePiece> gemstones = getGamePiecesByType("Gemstone");
+        List<Pose3d> redGemstones = new ArrayList<>();
+        List<Pose3d> blueGemstones = new ArrayList<>();
+
+        for (GamePiece gp : gemstones) {
+            if (gp instanceof GemstoneOnField gemstone) {
+                switch (gemstone.color) {
+                    case Red: redGemstones.add(gp.getPose3d()); break;
+                    case Blue: blueGemstones.add(gp.getPose3d()); break;
+                }
+            } else if (gp instanceof GemstoneOnFly gemstone) {
+                switch (gemstone.color) {
+                    case Red: redGemstones.add(gp.getPose3d()); break;
+                    case Blue: blueGemstones.add(gp.getPose3d()); break;
+                }
+            }
+        }
+
+        gemstoneHandler.drawByColor(redGemstones, GemstoneColor.Red);
+        gemstoneHandler.drawByColor(blueGemstones, GemstoneColor.Blue);
+        
+        Logger.recordOutput("FieldSimulation/Red Gemstones", redGemstones.toArray(Pose3d[]::new));
+        Logger.recordOutput("FieldSimulation/Blue Gemstones", blueGemstones.toArray(Pose3d[]::new));
     }
 }

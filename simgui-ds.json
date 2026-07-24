@@ -21,11 +21,11 @@
           "incKey": 83
         },
         {
-          "incKey": 66,
+          "incKey": 81,
           "keyRate": 0.10000000149011612
         },
         {
-          "incKey": 78,
+          "incKey": 69,
           "keyRate": 0.10000000149011612
         },
         {
@@ -34,8 +34,8 @@
           "maxAbsValue": 0.699999988079071
         }
       ],
-      "axisCount": 6,
-      "buttonCount": 10,
+      "axisCount": 5,
+      "buttonCount": 8,
       "buttonKeys": [
         85,
         79,
@@ -43,29 +43,29 @@
         80,
         340,
         75,
-        -1,
         266,
+        267,
         -1,
         -1
       ],
       "povConfig": [
         {
-          "key0": 49,
-          "key180": 51,
-          "key270": 81,
-          "key90": 69
+          "key0": 265,
+          "key180": 264,
+          "key270": 263,
+          "key90": 262
         }
       ],
       "povCount": 1
     },
     {
-      "axisCount": 5,
+      "axisCount": 0,
       "buttonCount": 8,
       "buttonKeys": [
-        -1,
-        -1,
-        -1,
-        -1,
+        90,
+        67,
+        88,
+        86,
         59,
         39,
         45,
@@ -104,7 +104,6 @@
     {
       "guid": "Keyboard0"
     },
-    {},
     {
       "guid": "Keyboard1"
     }

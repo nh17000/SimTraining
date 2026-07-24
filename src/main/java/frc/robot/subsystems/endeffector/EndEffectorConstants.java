@@ -12,11 +12,10 @@ import frc.robot.Constants.Mode;
 
 public class EndEffectorConstants {
     public enum EEState {
-            INTAKE(-4, 0),
-            OUTTAKE(12, 0),
-            OUTTAKE_CLASSIFIER(12, 6),
-            INDEXING_FWD(-2, 0),
-            INDEXING_BWD(2, 0),
+            INTAKE(-2, 0),
+            OUTTAKE(3, 0),
+            OUTTAKE_CLASSIFIER(6, 6),
+            OUTTAKE_HANDOFF(12, 0),
             OFF(0, 0);
 
             public final double leftVolts;
@@ -83,7 +82,7 @@ public class EndEffectorConstants {
         public static final int FRONT_LEFT_CAN_RANGE_ID = 46;
         public static final int FRONT_RIGHT_CAN_RANGE_ID = 47;
 
-        public static final double TRANSLATIONAL_TOLERANCE = Units.inchesToMeters(16);
+        public static final double TRANSLATIONAL_TOLERANCE = Units.inchesToMeters(11 / 2.0);
 
         public static final double INTAKING_TIME = 0.5;
         public static final double DROP_COOLDOWN = 2.0;

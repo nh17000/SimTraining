@@ -1,6 +1,8 @@
 package frc.robot.util.crystalcaverns;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import frc.robot.util.crystalcaverns.Colors.CrystalColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.Goal;
@@ -55,6 +57,12 @@ public class CaveSim implements SimulatedArena.Simulatable {
     public void draw(List<Pose3d> coralPosesToDisplay) {
         for (CaveBranch branch : branches) {
             branch.draw(coralPosesToDisplay);
+        }
+    }
+
+    public void drawByColor(List<Pose3d> coralPosesToDisplay, CrystalColor color) {
+        for (CaveBranch branch : branches) {
+            branch.drawByColor(coralPosesToDisplay, color);
         }
     }
 

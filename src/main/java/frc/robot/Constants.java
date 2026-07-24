@@ -13,7 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -53,6 +55,8 @@ public final class Constants {
         public static final Translation2d MID_OFFSET = new Translation2d(0.0, 0.0);
         // public static final Translation2d STATION_OFFSET = new Translation2d(Units.inchesToMeters(18), 0.0);
 
+        public static final Transform2d MINE_TRANSFORM = new Transform2d(Units.inchesToMeters(28), 0, Rotation2d.k180deg);
+
         public static final double DRIVE_kP = 5.0; // m/s per m error
         public static final double DRIVE_kI = 0.0;
         public static final double DRIVE_kD = 0.0;
@@ -78,9 +82,11 @@ public final class Constants {
     }
 
     public static final class VisualizerConstants {
-        public static final Translation3d STAGE0_ZERO = new Translation3d(-0.26035, 0, 0.32385);
-        public static final Translation3d WRIST_ZERO = new Translation3d(0.368313, 0, 0.196875);
+        public static final Translation3d STAGE0_ZERO = new Translation3d(-0.241300, 0, 0.377825);
+        public static final Translation3d WRIST_ZERO = new Translation3d(0.535083, 0, 0.238125);
         public static final Translation3d WRIST_OFFSET = WRIST_ZERO.minus(STAGE0_ZERO);
+
+        public static final Rotation2d CLIMBER_ANGLE = Rotation2d.fromDegrees(34);
 
         public static final Transform3d CRYSTAL_TRANSFORM = new Transform3d(
                 new Translation3d(Units.inchesToMeters(5.25), 0, 0)

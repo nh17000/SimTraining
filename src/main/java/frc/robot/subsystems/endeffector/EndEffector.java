@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.endeffector.EndEffectorConstants.EEState;
 import frc.robot.subsystems.endeffector.EndEffectorConstants.GamePieceMode;
-
-import java.util.function.BooleanSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -40,26 +38,7 @@ public class EndEffector extends SubsystemBase {
 
     public Command intake() {
         return run(() -> {
-            boolean frontDetected = inputs.frontData.isDetected();
-            boolean backDetected = inputs.backData.isDetected();
-
-            if (hasGemstone() || (frontDetected && backDetected)) state = EEState.OFF;
-            else if (frontDetected) state = EEState.INDEXING_FWD;
-            else if (backDetected) state = EEState.INDEXING_BWD;
-            else state = EEState.INTAKE;
-        });
-    }
-
-    public Command index(BooleanSupplier isForwardsSupplier) {
-        return run(() -> {
-            boolean isForwards = isForwardsSupplier.getAsBoolean();
-            boolean frontTripped = inputs.frontData.isDetected();
-            boolean backTripped = inputs.backData.isDetected();
-
-            if (hasGemstone()) state = EEState.OFF;
-            else if (isForwards && backTripped) state = EEState.INDEXING_BWD;
-            else if (!isForwards && frontTripped) state = EEState.INDEXING_FWD;
-            else state = EEState.OFF;
+            state = EEState.INTAKE;
         });
     }
 
@@ -72,6 +51,12 @@ public class EndEffector extends SubsystemBase {
     public Command outtakeClassifier() {
         return run(() -> {
             state = EEState.OUTTAKE_CLASSIFIER;
+        });
+    }
+
+    public Command outtakeHandoff() {
+        return run(() -> {
+            state = EEState.OUTTAKE_HANDOFF;
         });
     }
 

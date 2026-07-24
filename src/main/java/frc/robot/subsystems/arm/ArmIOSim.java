@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.simulation.TiltedElevatorSim;
 import edu.wpi.first.wpilibj.simulation.VariableLengthArmSim;
 import frc.robot.Constants;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ArmIOSim extends ArmIOTalonFX {
     private final TalonFXSimState pivotSimState;
@@ -34,7 +33,7 @@ public class ArmIOSim extends ArmIOTalonFX {
     private final SingleJointedArmSim wristSim = new SingleJointedArmSim(
             ArmConstants.WRIST_MOTOR,
             ArmConstants.WRIST_GEAR_RATIO,
-            ArmConstants.WRIST_MASS_KG,
+            SingleJointedArmSim.estimateMOI(ArmConstants.WRIST_LENGTH, ArmConstants.WRIST_MASS_KG),
             ArmConstants.WRIST_LENGTH,
             ArmConstants.WRIST_MIN_ANGLE,
             ArmConstants.WRIST_MAX_ANGLE,
@@ -76,8 +75,7 @@ public class ArmIOSim extends ArmIOTalonFX {
                 tiltedElevatorSim.getVelocityMetersPerSecond() / ArmConstants.EXTENSION_P_COEFFICIENT);
 
         // pivot + extension
-        variableLengthArmSim.setCGRadius(
-                (tiltedElevatorSim.getPositionMeters() + ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH) / 2.0);
+        variableLengthArmSim.setCGRadius(getCGRadius(tiltedElevatorSim.getPositionMeters()));
         variableLengthArmSim.setMOI(calcPivotMOI(tiltedElevatorSim.getPositionMeters()));
 
         tiltedElevatorSim.setAngleFromHorizontal(variableLengthArmSim.getAngleRads());
@@ -90,10 +88,13 @@ public class ArmIOSim extends ArmIOTalonFX {
         wristSimState.setRotorVelocity(wristSim.getVelocityRadPerSec() / ArmConstants.WRIST_P_COEFFICIENT);
     }
 
-    @AutoLogOutput(key = "Arm/Estimated MOI")
-    private double calcPivotMOI(double extensionLength) {
+    private static double getCGRadius(double extensionLength) {
+        return (ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH + extensionLength) / 3.5;
+    }
+
+    private static double calcPivotMOI(double extensionLength) {
         double m = ArmConstants.ARM_MASS_KG;
-        double r = ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH + extensionLength;
+        double r = getCGRadius(extensionLength);
         return 1.0 / 3.0 * m * r * r;
     }
 }

@@ -3,12 +3,16 @@ package frc.robot.util.crystalcaverns;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.crystalcaverns.Colors.GemstoneColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class GemstoneHandler {
-    private final List<Pose3d> stagedGemstones = new ArrayList<>();
+    public record GemstoneData(Pose3d pose, GemstoneColor color) {}
+    
+    private final List<GemstoneData> stagedGemstones = new ArrayList<>();
     // private boolean jeweleryFull = false;
 
     private static GemstoneHandler INSTANCE;
@@ -26,8 +30,8 @@ public class GemstoneHandler {
 
     public void reset() {
         stagedGemstones.clear();
-        stagedGemstones.add(FieldConstants.BLUE_GEMSTONE_STARTING_POSE);
-        stagedGemstones.add(FieldConstants.RED_GEMSTONE_STARTING_POSE);
+        stagedGemstones.add(new GemstoneData(FieldConstants.BLUE_GEMSTONE_STARTING_POSE, GemstoneColor.Blue));
+        stagedGemstones.add(new GemstoneData(FieldConstants.RED_GEMSTONE_STARTING_POSE, GemstoneColor.Red));
         // jeweleryFull = false;
     }
 
@@ -35,11 +39,12 @@ public class GemstoneHandler {
         // simulateJewelry();
     }
 
-    public Optional<Pose3d> intake(Pose3d intakePose) {
+    public Optional<GemstoneData> intake(Pose3d intakePose) {
         var iterator = stagedGemstones.iterator();
         while (iterator.hasNext()) {
-            Pose3d gemstone = iterator.next();
-            if (checkTolerance(intakePose.minus(gemstone))) {
+            GemstoneData gemstone = iterator.next();
+            Pose3d gemstonePose = gemstone.pose();
+            if (checkTolerance(intakePose.minus(gemstonePose))) {
                 iterator.remove();
                 return Optional.of(gemstone);
             }
@@ -86,7 +91,15 @@ public class GemstoneHandler {
     // }
 
     public void draw(List<Pose3d> poses) {
-        poses.addAll(stagedGemstones);
+        stagedGemstones.forEach((GemstoneData gd) -> poses.add(gd.pose()));
+    }
+    
+    public void drawByColor(List<Pose3d> poses, GemstoneColor color) {
+        stagedGemstones.forEach((GemstoneData gd) -> {
+            if (gd.color() == color) {
+                poses.add(gd.pose());
+            }
+        });
     }
 
     private static boolean checkTolerance(Transform3d difference) {

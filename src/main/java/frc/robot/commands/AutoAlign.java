@@ -5,19 +5,26 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.AlignConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.crystalcaverns.FieldConstants;
+import frc.robot.util.crystalcaverns.MineSim;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class AutoAlign {
     private Pose2d targetPose = Pose2d.kZero;
-
     private Debouncer isAlignedDebouncer = new Debouncer(0.2);
+
+    @Getter
+    @AutoLogOutput
+    private double distanceToPassingTarget = 0.0;
 
     @Getter
     @AutoLogOutput
@@ -59,6 +66,9 @@ public class AutoAlign {
             boolean alignLeft = (tagPose.getRotation().getDegrees() + 180) % 90 > 45;
             offset = alignLeft ? AlignConstants.LEFT_BRANCH_OFFSET : AlignConstants.RIGHT_BRANCH_OFFSET;
         }
+        if (!isForwards) {
+            offset = offset.plus(new Translation2d(Units.inchesToMeters(15), 0));
+        }
 
         return targetPose =
                 tagPose.transformBy(new Transform2d(offset, isForwards ? Rotation2d.k180deg : Rotation2d.kZero));
@@ -70,6 +80,21 @@ public class AutoAlign {
 
     public Command jewelryAlign(Drive drive) {
         return new DriveToPose(drive, () -> robotSupplier.get().nearest(FieldConstants.JEWELRY_ALIGN_POSES), robotSupplier);
+    }
+
+    public Command mineAlign(Drive drive) {
+        return new DriveToPose(drive, () -> MineSim.getMine().transformBy(AlignConstants.MINE_TRANSFORM), robotSupplier);
+    }
+
+    public Command passAlign(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+        return DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> {
+            Translation2d target = RobotContainer.isRedAlliance() 
+                    ? FieldConstants.RED_PASSING_TARGET : FieldConstants.BLUE_PASSING_TARGET;
+            Translation2d diff = robotSupplier.get().getTranslation().minus(target);
+            
+            distanceToPassingTarget = diff.getNorm();
+            return diff.getAngle();
+        });
     }
 
     @AutoLogOutput
