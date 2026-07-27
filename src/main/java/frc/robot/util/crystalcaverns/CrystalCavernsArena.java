@@ -3,6 +3,7 @@ package frc.robot.util.crystalcaverns;
 import static frc.robot.util.crystalcaverns.FieldConstants.*;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.util.crystalcaverns.Colors.CrystalColor;
 import frc.robot.util.crystalcaverns.Colors.GemstoneColor;
@@ -107,7 +108,11 @@ public class CrystalCavernsArena extends SimulatedArena {
         for (GamePiece gp : crystals) {
             if (gp instanceof CrystalOnField crystal) {
                 int colorIdx = crystal.color.index;
-                crystalPoses.get(colorIdx).add(crystal.getPose3d());
+                Pose3d p = crystal.getPose3d();
+                if (crystal.color == CrystalColor.Camera) {
+                    p = new Pose3d(p.getTranslation(), p.getRotation().rotateBy(new Rotation3d(0, 0 * Math.PI, 0 * Math.PI)));
+                }
+                crystalPoses.get(colorIdx).add(p);
             } else if (gp instanceof CrystalOnFly crystal) {
                 int colorIdx = crystal.color.index;
                 crystalPoses.get(colorIdx).add(crystal.getPose3d());

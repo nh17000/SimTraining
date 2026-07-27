@@ -44,12 +44,12 @@ public class ArmConstants {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 25;
+        config.CurrentLimits.SupplyCurrentLimit = 45;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = 25;
+        config.CurrentLimits.StatorCurrentLimit = 45;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = Units.degreesToRadians(1000) / PIVOT_P_COEFFICIENT;
-        config.MotionMagic.MotionMagicAcceleration = Units.degreesToRadians(600) / PIVOT_P_COEFFICIENT;
+        config.MotionMagic.MotionMagicCruiseVelocity = 75;
+        config.MotionMagic.MotionMagicAcceleration = 275;
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -58,7 +58,7 @@ public class ArmConstants {
         config.Slot0.kS = 0.0;
         config.Slot0.kV = 0.0;
         config.Slot0.kA = 0.0;
-        config.Slot0.kP = 0.6;
+        config.Slot0.kP = 2.5;
         config.Slot0.kI = 0.0;
         config.Slot0.kD = 0.0;
 
@@ -73,8 +73,8 @@ public class ArmConstants {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = 30;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = Units.inchesToMeters(200) / EXTENSION_P_COEFFICIENT;
-        config.MotionMagic.MotionMagicAcceleration = Units.inchesToMeters(400) / EXTENSION_P_COEFFICIENT;
+        config.MotionMagic.MotionMagicCruiseVelocity = 80;
+        config.MotionMagic.MotionMagicAcceleration = 325;
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -83,7 +83,7 @@ public class ArmConstants {
         config.Slot0.kS = 0.0;
         config.Slot0.kV = 0.0;
         config.Slot0.kA = 0.0;
-        config.Slot0.kP = 0.5;
+        config.Slot0.kP = 1.5;
         config.Slot0.kI = 0.0;
         config.Slot0.kD = 0.0;
 
@@ -125,26 +125,34 @@ public class ArmConstants {
 
     public static final int WRIST_ID = 40;
 
-    public static final double PIVOT_GEAR_RATIO = (60. / 12.) * (60. / 16.) * (58. / 9.); // 120.83 (old)
-    public static final double EXTENSION_GEAR_RATIO = (32. / 16.) * (40. / 26.) * (50. / 20.) * (62. / 76.); // 6.28 (old)
+    public static final double PIVOT_GEAR_RATIO = 130; // was 120.83
+    public static final double EXTENSION_GEAR_RATIO = 4; // was 6.28
     public static final double WRIST_GEAR_RATIO = 54. / 8.; // 6.75
 
-    public static final double ARM_MASS_KG = Units.lbsToKilograms(20);
+    public static final double EXTENSION_TUBE_MASS = Units.lbsToKilograms(1.5);
+    public static final double WRIST_MASS_KG = Units.lbsToKilograms(5);
+    public static final double ARM_STAGE0_MASS = Units.lbsToKilograms(20.5); // most of this is the launcher
+
+    public static final double EXTENSION_MASS_KG = EXTENSION_TUBE_MASS + WRIST_MASS_KG;
+    public static final double TOTAL_MASS_KG = ARM_STAGE0_MASS + EXTENSION_TUBE_MASS + WRIST_MASS_KG;
+    
     public static final double ARM_SHOULDER_TO_WRIST_LENGTH = VisualizerConstants.WRIST_OFFSET.getNorm();
+
+    public static final double ARM_STAGE0_MOI = (1. / 3.) * ARM_STAGE0_MASS * Math.pow(ARM_SHOULDER_TO_WRIST_LENGTH, 2);
+    public static final double EXTENSION_TUBE_I_CM = (1. / 12.) * EXTENSION_TUBE_MASS * Math.pow(ARM_SHOULDER_TO_WRIST_LENGTH / 2.0, 2);
 
     public static final double PIVOT_P_COEFFICIENT = 2 * Math.PI / PIVOT_GEAR_RATIO;
     public static final double PIVOT_MIN_ANGLE = 0;
     public static final double PIVOT_MAX_ANGLE = Units.degreesToRadians(160);
-    public static final DCMotor PIVOT_MOTORS = DCMotor.getKrakenX60(3);
+    public static final DCMotor PIVOT_MOTORS = DCMotor.getKrakenX60Foc(3);
 
-    public static final double EXTENSION_DRUM_RADIUS = Units.inchesToMeters(0.25 * 16.0 / Math.PI * 0.5); // ~0.64"
+    public static final double EXTENSION_DRUM_RADIUS = Units.inchesToMeters(0.8); //Units.inchesToMeters(0.25 * 16.0 / Math.PI * 0.5); // ~0.64"
     public static final double EXTENSION_P_COEFFICIENT = 2.0 * Math.PI * EXTENSION_DRUM_RADIUS / EXTENSION_GEAR_RATIO;
     public static final double EXTENSION_MIN_LENGTH = 0;
     public static final double EXTENSION_MAX_LENGTH = Units.inchesToMeters(30.5);
-    public static final DCMotor EXTENSION_MOTORS = DCMotor.getKrakenX60(3);
+    public static final DCMotor EXTENSION_MOTORS = DCMotor.getKrakenX60Foc(2);
 
     public static final double WRIST_P_COEFFICIENT = 2 * Math.PI / WRIST_GEAR_RATIO;
-    public static final double WRIST_MASS_KG = Units.lbsToKilograms(5);
     public static final double WRIST_LENGTH = Units.inchesToMeters(6);
     public static final double WRIST_STARTING_ANGLE = Units.degreesToRadians(-57.737877);
     public static final double WRIST_MIN_ANGLE = Units.degreesToRadians(-165);

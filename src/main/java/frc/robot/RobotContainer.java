@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -259,7 +260,10 @@ public class RobotContainer {
         controller
                 .leftBumper()
                 .whileTrue(arm.followStateSupplier(() -> ArmState.GROUND_INTAKE))
-                .onFalse(arm.followStateSupplier(() -> inAllianceZone() && endEffector.hasGamePiece() ? ArmState.HOLD : ArmState.STOWED));
+                .onFalse(arm.followStateSupplier(
+                            () -> inAllianceZone() && endEffector.hasGamePiece() ? ArmState.HOLD : ArmState.STOWED)
+                    .andThen(new ConditionalCommand(
+                        launcher.setSelfDirecting(), Commands.none(), () -> endEffector.hasCrystal() && !inAllianceZone())));
 
         controller
                 .rightBumper()
@@ -297,14 +301,16 @@ public class RobotContainer {
                                 () -> ArmState.of(2, align.isForwards())))
                 .whileTrue(align.caveAlignUpper(drive));
 
-        // --- Operator Controls ---
-        opController
-                .povUp()
+        controller
+                .povLeft()
                 .onTrue(arm.applyState(ArmState.MINE))
                 .whileTrue(align.mineAlign(drive));
+
+        // --- Operator Controls ---
         opController.povLeft().onTrue(arm.applyState(ArmState.TUNABLE));
         opController.povRight().onTrue(arm.applyState(ArmState.BOTTOM_CLASSIFIER));
-        opController.povDown().onTrue(arm.applyState(ArmState.STOWED));
+        opController.povDown().onTrue(arm.applyState(ArmState.STOWED)); 
+        opController.rightBumper().onTrue(launcher.setManual());
     }
 
     /**

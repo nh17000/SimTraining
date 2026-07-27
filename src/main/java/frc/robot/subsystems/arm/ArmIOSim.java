@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.simulation.TiltedElevatorSim;
 import edu.wpi.first.wpilibj.simulation.VariableLengthArmSim;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmIOSim extends ArmIOTalonFX {
     private final TalonFXSimState pivotSimState;
@@ -18,13 +19,13 @@ public class ArmIOSim extends ArmIOTalonFX {
             ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH,
             ArmConstants.PIVOT_MIN_ANGLE,
             ArmConstants.PIVOT_MAX_ANGLE,
-            ArmConstants.ARM_MASS_KG,
+            ArmConstants.TOTAL_MASS_KG,
             true);
 
     private final TiltedElevatorSim tiltedElevatorSim = new TiltedElevatorSim(
             ArmConstants.EXTENSION_MOTORS,
             ArmConstants.EXTENSION_GEAR_RATIO,
-            ArmConstants.ARM_MASS_KG,
+            ArmConstants.EXTENSION_MASS_KG,
             ArmConstants.EXTENSION_DRUM_RADIUS,
             ArmConstants.EXTENSION_MIN_LENGTH,
             ArmConstants.EXTENSION_MAX_LENGTH,
@@ -75,8 +76,13 @@ public class ArmIOSim extends ArmIOTalonFX {
                 tiltedElevatorSim.getVelocityMetersPerSecond() / ArmConstants.EXTENSION_P_COEFFICIENT);
 
         // pivot + extension
-        variableLengthArmSim.setCGRadius(getCGRadius(tiltedElevatorSim.getPositionMeters()));
-        variableLengthArmSim.setMOI(calcPivotMOI(tiltedElevatorSim.getPositionMeters()));
+        double cgRadius = getCGRadius(tiltedElevatorSim.getPositionMeters());
+        double pivotMOI = calcPivotMOI(tiltedElevatorSim.getPositionMeters());
+        variableLengthArmSim.setCGRadius(cgRadius);
+        variableLengthArmSim.setMOI(pivotMOI);
+
+        Logger.recordOutput("Arm/Sim/CG Radius", cgRadius);
+        Logger.recordOutput("Arm/Sim/Pivot MOI", pivotMOI);
 
         tiltedElevatorSim.setAngleFromHorizontal(variableLengthArmSim.getAngleRads());
 
@@ -89,12 +95,20 @@ public class ArmIOSim extends ArmIOTalonFX {
     }
 
     private static double getCGRadius(double extensionLength) {
-        return (ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH + extensionLength) / 3.5;
+        return (ArmConstants.ARM_STAGE0_MASS * (ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH / 2.0) 
+                + ArmConstants.EXTENSION_TUBE_MASS * (extensionLength + (ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH / 2.0)) 
+                + ArmConstants.WRIST_MASS_KG * (extensionLength + ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH)) 
+                / ArmConstants.TOTAL_MASS_KG;
     }
 
     private static double calcPivotMOI(double extensionLength) {
-        double m = ArmConstants.ARM_MASS_KG;
-        double r = getCGRadius(extensionLength);
-        return 1.0 / 3.0 * m * r * r;
+        // parallel axis theorem: I_cm + Md^2
+        double extensionTubeMOI = ArmConstants.EXTENSION_TUBE_I_CM
+                + ArmConstants.EXTENSION_TUBE_MASS * Math.pow(extensionLength + (ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH / 2.0), 2.0);
+
+        // effectively a point mass: mr^2
+        double wristMOI = ArmConstants.WRIST_MASS_KG * Math.pow(extensionLength + ArmConstants.ARM_SHOULDER_TO_WRIST_LENGTH, 2);
+
+        return ArmConstants.ARM_STAGE0_MOI + extensionTubeMOI + wristMOI;
     }
 }
