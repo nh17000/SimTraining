@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AlignConstants;
@@ -67,7 +66,7 @@ public class AutoAlign {
             offset = alignLeft ? AlignConstants.LEFT_BRANCH_OFFSET : AlignConstants.RIGHT_BRANCH_OFFSET;
         }
         if (!isForwards) {
-            offset = offset.plus(new Translation2d(Units.inchesToMeters(15), 0));
+            offset = offset.plus(AlignConstants.BACKWARDS_OFFSET);
         }
 
         return targetPose =

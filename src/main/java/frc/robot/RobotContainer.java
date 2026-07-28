@@ -17,6 +17,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoAlign;
@@ -47,6 +51,7 @@ import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.crystalcaverns.Colors.CrystalColor;
 import frc.robot.util.Cameras;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.crystalcaverns.CrystalCavernsArena;
 import frc.robot.util.crystalcaverns.FieldConstants;
 import java.util.function.Supplier;
@@ -91,6 +96,14 @@ public class RobotContainer {
 
     private Supplier<Optional<Pose3d>> heldCrystalPoseSupplier;
     private Supplier<CrystalColor> heldCrystalColorSupplier;
+
+    private double curClimbHeight = 0;
+    private double maxClimbHeight = 0;
+
+    private final LoggedTunableNumber maxClimbHeight1 = new LoggedTunableNumber("rc/mch", 5.75);
+    private final LoggedTunableNumber maxClimbHeight2 = new LoggedTunableNumber("rc/mch2", 13.5);
+    private final LoggedTunableNumber maxClimbHeight3 = new LoggedTunableNumber("rc/mch3", 28.4);
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -147,7 +160,7 @@ public class RobotContainer {
                 EndEffectorIOSim eeSim = new EndEffectorIOSim(
                         driveSimulation, 
                         () -> arm.getArmPosition().getWristTransform(), 
-                        () -> arm.getWristAngleRads() > Units.degreesToRadians(125), 
+                        () -> arm.getWristAngleRads() > Units.degreesToRadians(135), 
                         launcher::getAngularVelocityRadPerSec);
 
                 // gamePieceVis = eeSim.getGamePieceVizRunnable();
@@ -302,9 +315,43 @@ public class RobotContainer {
                 .whileTrue(align.caveAlignUpper(drive));
 
         controller
-                .povLeft()
+                .leftTrigger()
                 .onTrue(arm.applyState(ArmState.MINE))
                 .whileTrue(align.mineAlign(drive));
+
+        controller
+                .povLeft()
+                .onTrue(arm.applyState(ArmState.L1_CLIMB)
+                        .andThen(new InstantCommand(() -> { 
+                                this.curClimbHeight = 0; 
+                                this.maxClimbHeight = maxClimbHeight1.get(); 
+                        })));
+                
+        controller
+                .povRight()
+                .onTrue(arm.applyState(ArmState.L2_CLIMB)
+                        .andThen(new InstantCommand(() -> { 
+                                this.curClimbHeight = 0; 
+                                this.maxClimbHeight = maxClimbHeight2.get(); 
+                        })));
+                
+        controller
+                .povUp()
+                .onTrue(arm.applyState(ArmState.L3_CLIMB)
+                        .andThen(new InstantCommand(() -> { 
+                                this.curClimbHeight = 0; 
+                                this.maxClimbHeight = maxClimbHeight3.get(); 
+                        })));
+                
+        controller.povDown()
+                .onTrue(new DeferredCommand(
+                        () -> arm.applyState(arm.getState() == ArmState.L3_CLIMB 
+                                ? ArmState.L3_CLIMBED : ArmState.CLIMBED), 
+                        Set.of(arm))
+                .andThen(new RunCommand(() -> { 
+                        this.curClimbHeight = Math.max(Units.inchesToMeters(maxClimbHeight) - arm.getExtensionLengthMeters(), 0); 
+                })));
+
 
         // --- Operator Controls ---
         opController.povLeft().onTrue(arm.applyState(ArmState.TUNABLE));
@@ -335,7 +382,7 @@ public class RobotContainer {
             return;
 
         SimulatedArena.getInstance().simulationPeriodic();
-        Logger.recordOutput("FieldSimulation/Pose", new Pose3d(driveSimulation.getSimulatedDriveTrainPose()));
+        Logger.recordOutput("FieldSimulation/Pose", new Pose3d(driveSimulation.getSimulatedDriveTrainPose()).transformBy(new Transform3d(0, 0, curClimbHeight, new Rotation3d())));
         if (SimulatedArena.getInstance() instanceof CrystalCavernsArena ccArena) {
                 ccArena.logGamePieces(heldCrystalPoseSupplier.get(), heldCrystalColorSupplier.get());
         }

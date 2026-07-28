@@ -56,6 +56,7 @@ public final class Constants {
         // public static final Translation2d STATION_OFFSET = new Translation2d(Units.inchesToMeters(18), 0.0);
 
         public static final Transform2d MINE_TRANSFORM = new Transform2d(Units.inchesToMeters(28), 0, Rotation2d.k180deg);
+        public static final Translation2d BACKWARDS_OFFSET = new Translation2d(Units.inchesToMeters(12.5), 0);
 
         public static final double DRIVE_kP = 5.0; // m/s per m error
         public static final double DRIVE_kI = 0.0;

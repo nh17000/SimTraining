@@ -169,7 +169,7 @@ public class FieldConstants {
             .toArray(Translation2d[]::new);
 
     public static final List<Pose2d> CAVE_ALIGN_POSES = new ArrayList<>();
-    public static final double BRANCH_TO_ROBOT = Units.inchesToMeters(30);
+    public static final double BRANCH_TO_ROBOT = Units.inchesToMeters(32.5);
     static {
         for (int i = 0; i < BLUE_LOWER_BRANCHES.length; i++) {
             Rotation2d blueRot = Rotation2d.fromDegrees(45 * i + 22.5);

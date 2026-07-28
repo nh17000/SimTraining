@@ -18,6 +18,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.launcher.LauncherConstants;
 import frc.robot.util.crystalcaverns.MineSim;
 import frc.robot.util.crystalcaverns.Colors.CrystalColor;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.crystalcaverns.Colors;
 import frc.robot.util.crystalcaverns.CrystalOnField;
 import frc.robot.util.crystalcaverns.CrystalOnFly;
@@ -51,10 +52,10 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
                     EndEffectorConstants.LR_MOTOR, EndEffectorConstants.LR_MOI, EndEffectorConstants.LR_GEAR_RATIO),
             EndEffectorConstants.LR_MOTOR);
 
-    private static final double MIN_POS = 0.195;
-    private static final double MAX_EE_POS = 0.315;
-    private static final double MAX_LAUNCHER_POS = 0.55;
-    private static final double INTAKE_POS = 0.3;
+    private static final double MIN_POS = 0.215;
+    private static final double MAX_EE_POS = 0.335;
+    private static final double MAX_LAUNCHER_POS = 0.57;
+    private static final double INTAKE_POS = 0.32;
     
     private static final double POS_TOLERANCE = 0.01;
     
@@ -74,14 +75,14 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private BooleanSupplier handoffSupplier;
     private DoubleSupplier launcherRPSSupplier;
 
-    // private final LoggedTunableNumber x = new LoggedTunableNumber("Test/x", 0.0);
+    // private final LoggedTunableNumber x = new LoggedTunableNumber("cc/x", 0.3);
     // private final LoggedTunableNumber y = new LoggedTunableNumber("Test/y", 0.0);
-    // private final LoggedTunableNumber z = new LoggedTunableNumber("Test/z", 0.0);
+    private final LoggedTunableNumber z = new LoggedTunableNumber("cc/z", 0.0);
     // private final LoggedTunableNumber roll = new LoggedTunableNumber("Test/r", 0.0);
-    // private final LoggedTunableNumber pitch = new LoggedTunableNumber("Test/p", 0.0);
+    private final LoggedTunableNumber pitch = new LoggedTunableNumber("cc/p", 57.75);
     // private final LoggedTunableNumber yaw = new LoggedTunableNumber("Test/yaw", 0.0);
     // private final LoggedTunableNumber r2 = new LoggedTunableNumber("Test/r2", 0.0);
-    // private final LoggedTunableNumber p2 = new LoggedTunableNumber("Test/p2", 0.0);
+    private final LoggedTunableNumber p2 = new LoggedTunableNumber("cc/p2", 57.5);
     // private final LoggedTunableNumber yaw2 = new LoggedTunableNumber("Test/yaw2", 0.0);
 
     public EndEffectorIOSim(
@@ -269,9 +270,9 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
                 //         Units.degreesToRadians(yaw.get()))));
                 // .plus(VisualizerConstants.CRYSTAL_TRANSFORM)
                 .plus(new Transform3d(
-                    new Translation3d(crystalPos, 0, 0.015)
-                        .rotateBy(new Rotation3d(0, Units.degreesToRadians(45), 0)), 
-                    new Rotation3d(0, Units.degreesToRadians(45), 0)));
+                    new Translation3d(crystalPos, 0, z.get())
+                        .rotateBy(new Rotation3d(0, Units.degreesToRadians(p2.get()), 0)), 
+                    new Rotation3d(0, Units.degreesToRadians(pitch.get()), 0)));
     }
 
     private Pose3d getHeldCrystalPose() {

@@ -10,16 +10,21 @@ import frc.robot.Constants.VisualizerConstants;
 public class ArmConstants {
     public enum ArmState {
         STOWED(0, 0, 0),
-        UPPER_CRYSTAL(36.5, 25, -36.5),
-        LOWER_CRYSTAL(36.5, 0, -36.5),
-        UPPER_CRYSTAL_BACKWARDS(148, 24, 32),
-        LOWER_CRYSTAL_BACKWARDS(148, 0, 35),
-        GROUND_INTAKE(0, 0, -70),
-        TOP_CLASSIFIER(55, 6, -60),
-        BOTTOM_CLASSIFIER(36.5, 0, -47.5),
-        HOLD(60, 0, -36.5),
-        MINE(40, 0, -12.5),
-        HANDOFF(0, 0, 128.5),
+        UPPER_CRYSTAL(35, 25, -20),
+        LOWER_CRYSTAL(35, 0, -20),
+        UPPER_CRYSTAL_BACKWARDS(147, 24, 55),
+        LOWER_CRYSTAL_BACKWARDS(147, 0, 55),
+        GROUND_INTAKE(0, 0, -55),
+        TOP_CLASSIFIER(55, 6, -60 + 16.5),
+        BOTTOM_CLASSIFIER(36.5, 0, -47.5 + 16.5),
+        HOLD(60, 0, -20),
+        MINE(40, 0, -12.5 + 16.5),
+        HANDOFF(0, 0, 146),
+        L1_CLIMB(90, 7, -55),
+        L2_CLIMB(90, 14.75, -55),
+        L3_CLIMB(90, 29.65, 146),
+        CLIMBED(90, 2, -55),
+        L3_CLIMBED(90, 2, 146),
         TUNABLE(0, 0, 125);
 
         public final ArmPosition position;
@@ -154,8 +159,9 @@ public class ArmConstants {
 
     public static final double WRIST_P_COEFFICIENT = 2 * Math.PI / WRIST_GEAR_RATIO;
     public static final double WRIST_LENGTH = Units.inchesToMeters(6);
-    public static final double WRIST_STARTING_ANGLE = Units.degreesToRadians(-57.737877);
-    public static final double WRIST_MIN_ANGLE = Units.degreesToRadians(-165);
-    public static final double WRIST_MAX_ANGLE = Units.degreesToRadians(130); // 105
+    public static final double NEW_WRIST_OFFSET = Units.degreesToRadians(16.635924);
+    public static final double WRIST_MIN_ANGLE = Units.degreesToRadians(-54.864076); // -165
+    public static final double WRIST_MAX_ANGLE = Units.degreesToRadians(145.135924); // 130
+    public static final double WRIST_STARTING_ANGLE = WRIST_MIN_ANGLE; // -57.737877
     public static final DCMotor WRIST_MOTOR = DCMotor.getKrakenX60Foc(1);
 }
