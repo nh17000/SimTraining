@@ -92,17 +92,15 @@ public class RobotContainer {
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
-//     private Runnable gamePieceVis = () -> {};
-
     private Supplier<Optional<Pose3d>> heldCrystalPoseSupplier;
     private Supplier<CrystalColor> heldCrystalColorSupplier;
 
     private double curClimbHeight = 0;
     private double maxClimbHeight = 0;
 
-    private final LoggedTunableNumber maxClimbHeight1 = new LoggedTunableNumber("rc/mch", 5.75);
-//     private final LoggedTunableNumber maxClimbHeight2 = new LoggedTunableNumber("rc/mch2", 13.5);
-//     private final LoggedTunableNumber maxClimbHeight3 = new LoggedTunableNumber("rc/mch3", 28.4);
+    private final LoggedTunableNumber maxClimbHeight1 = new LoggedTunableNumber("Climber/Max Climb Height L1", 5.75);
+    // private final LoggedTunableNumber maxClimbHeight2 = new LoggedTunableNumber("Climber/Max Climb Height L2", 13.5);
+    // private final LoggedTunableNumber maxClimbHeight3 = new LoggedTunableNumber("Climber/Max Climb Height L3", 28.4);
 
 
     /**
@@ -250,14 +248,6 @@ public class RobotContainer {
         endEffector.setDefaultCommand(endEffector.intake());
 
         // --- Driver Controls ---
-        // controller
-        //         .povUp()
-        //         .whileTrue(new ConditionalCommand(
-        //                 align.netAlign(drive), align.stationAlign(drive),
-        //                 endEffector::hasAlgae));
-        // controller.povDown().whileTrue(align.reefAlignMid(drive));
-        // controller.povLeft().whileTrue(align.caveAlignUpper(drive));
-        // controller.povRight().whileTrue(align.caveAlignLower(drive));
 
         // Reset gyro / odometry
         final Runnable resetGyro = Constants.currentMode == Constants.Mode.SIM
@@ -392,7 +382,6 @@ public class RobotContainer {
                 ccArena.logGamePieces(heldCrystalPoseSupplier.get(), heldCrystalColorSupplier.get());
         }
         Cameras.log(driveSimulation.getSimulatedDriveTrainPose());
-        // gamePieceVis.run();
     }
 
     public static boolean isRedAlliance() {

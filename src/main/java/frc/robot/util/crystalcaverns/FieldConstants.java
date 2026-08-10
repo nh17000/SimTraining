@@ -8,10 +8,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.crystalcaverns.Colors.CrystalColor;
 
 public class FieldConstants {
@@ -200,132 +198,6 @@ public class FieldConstants {
 
     public static final Translation2d BLUE_PASSING_TARGET = new Translation2d(2.056, 5.414);
     public static final Translation2d RED_PASSING_TARGET = new Translation2d(FIELD_LENGTH - 2.056, 5.414);
-
-    // hero heist constants
-    public static final double LOW_FOOTHILL_HEIGHT = Units.inchesToMeters(46.5);
-    public static final double HIGH_FOOTHILL_HEIGHT = Units.inchesToMeters(103.5);
-    public static final double UPTOWN_HEIGHT = Units.inchesToMeters(68.574);
-    public static final double DOWNTOWN_HEIGHT = Units.inchesToMeters(42 + 6); // shoot above opening
-
-    public static final Pose2d LEFT_UPTOWN_DISTRICT = new Pose2d(Units.inchesToMeters(204),
-            Units.inchesToMeters(325.882), Rotation2d.kZero);
-    public static final Pose2d LEFT_DOWNTOWN_DISTRICT = new Pose2d(Units.inchesToMeters(204), Units.inchesToMeters(-1),
-            Rotation2d.kZero);
-    public static final double DISTRICT_SEPARATION = Units.inchesToMeters(48);
-    public static final int NUM_DISTRICTS = 6; // 6 uptown and 6 downtown districts
-
-    public static final List<Pose2d> FOOTHILL_DISTRICTS = new ArrayList<>();
-    public static final List<Pose2d> UPTOWN_DISTRICTS = new ArrayList<>();
-    public static final List<Pose2d> DOWNTOWN_DISTRICTS = new ArrayList<>();
-
-    static {
-        // east foothills, red protected zone
-        FOOTHILL_DISTRICTS.add(new Pose2d(0.4127, 7.196, Rotation2d.kZero));
-        FOOTHILL_DISTRICTS.add(new Pose2d(1.223, 7.882, Rotation2d.kZero));
-
-        // west foothills, blue protected zone
-        FOOTHILL_DISTRICTS.add(new Pose2d(FIELD_LENGTH - 0.4127, 7.196, Rotation2d.kZero));
-        FOOTHILL_DISTRICTS.add(new Pose2d(FIELD_LENGTH - 1.223, 7.882, Rotation2d.kZero));
-
-        for (int i = 0; i < NUM_DISTRICTS; i++) {
-            UPTOWN_DISTRICTS.add(
-                    LEFT_UPTOWN_DISTRICT.plus(new Transform2d(i * DISTRICT_SEPARATION, 0, Rotation2d.kZero)));
-
-            DOWNTOWN_DISTRICTS.add(
-                    LEFT_DOWNTOWN_DISTRICT.plus(new Transform2d(i * DISTRICT_SEPARATION, 0, Rotation2d.kZero)));
-        }
-    }
-
-    public static final int BLUE_BUBBLE_ROWS = 5;
-    public static final int RED_BUBBLE_ROWS = 5;
-    public static final int BLUE_BUBBLE_COLS = 3;
-    public static final int RED_BUBBLE_COLS = 3;
-    public static final double BUBBLE_ROW_SEPARATION = Units.inchesToMeters(24);
-    public static final double BUBBLE_COL_SEPARATION = Units.inchesToMeters(48);
-    public static final Pose2d[] BLUE_BUBBLE_STARTING_POSITIONS = new Pose2d[BLUE_BUBBLE_ROWS * BLUE_BUBBLE_COLS];
-    public static final Pose2d[] RED_BUBBLE_STARTING_POSITIONS = new Pose2d[RED_BUBBLE_ROWS * BLUE_BUBBLE_COLS];
-    public static final Pose2d FIRST_BLUE_BUBBLE_STARTING_POSE = new Pose2d(Units.inchesToMeters(204),
-            Units.inchesToMeters(114), Rotation2d.kZero);
-    public static final Pose2d FIRST_RED_BUBBLE_STARTING_POSE = new Pose2d(Units.inchesToMeters(444),
-            Units.inchesToMeters(114), Rotation2d.kZero);
-
-    static {
-        int index = 0;
-        for (int row = 0; row < BLUE_BUBBLE_ROWS; row++) {
-            for (int col = 0; col < BLUE_BUBBLE_COLS; col++) {
-                BLUE_BUBBLE_STARTING_POSITIONS[index++] = FIRST_BLUE_BUBBLE_STARTING_POSE.transformBy(new Transform2d(
-                        col * BUBBLE_COL_SEPARATION, row * BUBBLE_ROW_SEPARATION, Rotation2d.kZero));
-            }
-        }
-        index = 0;
-        for (int row = 0; row < RED_BUBBLE_ROWS; row++) {
-            for (int col = 0; col < RED_BUBBLE_COLS; col++) {
-                RED_BUBBLE_STARTING_POSITIONS[index++] = FIRST_RED_BUBBLE_STARTING_POSE.transformBy(new Transform2d(
-                        col * -BUBBLE_COL_SEPARATION, row * BUBBLE_ROW_SEPARATION, Rotation2d.kZero));
-            }
-        }
-    }
-
-    // reefscape constants, old
-    public static final int[] BLUE_REEF_TAG_IDS = { 18, 19, 20, 21, 22, 17 };
-    public static final int[] BLUE_CORAL_STATION_TAG_IDS = { 12, 13 };
-    public static final int[] RED_REEF_TAG_IDS = { 7, 6, 11, 10, 9, 8 };
-    public static final int[] RED_CORAL_STATION_TAG_IDS = { 1, 2 };
-    public static final int[] ALL_REEF_TAG_IDS = { 18, 19, 20, 21, 22, 17, 7, 6, 11, 10, 9, 8 };
-
-    public static final List<Pose2d> CORAL_STATIONS = new ArrayList<>();
-
-    static {
-        for (int tag : BLUE_CORAL_STATION_TAG_IDS) {
-            CORAL_STATIONS.add(
-                    VisionConstants.aprilTagLayout.getTagPose(tag).get().toPose2d());
-        }
-        for (int tag : RED_CORAL_STATION_TAG_IDS) {
-            CORAL_STATIONS.add(
-                    VisionConstants.aprilTagLayout.getTagPose(tag).get().toPose2d());
-        }
-    }
-
-    public static final Pose3d[] REEF_TAG_POSES = new Pose3d[RED_REEF_TAG_IDS.length + BLUE_REEF_TAG_IDS.length];
-
-    static {
-        int i = 0;
-        for (int tag : FieldConstants.RED_REEF_TAG_IDS) {
-            REEF_TAG_POSES[i++] = VisionConstants.aprilTagLayout.getTagPose(tag).get();
-        }
-        for (int tag : FieldConstants.BLUE_REEF_TAG_IDS) {
-            REEF_TAG_POSES[i++] = VisionConstants.aprilTagLayout.getTagPose(tag).get();
-        }
-    }
-
-    public static final List<Pose2d> REEF_TAGS = new ArrayList<>();
-
-    static {
-        for (Pose3d tag : REEF_TAG_POSES) {
-            REEF_TAGS.add(tag.toPose2d());
-        }
-    }
-
-    public static final Transform3d HIGH_ALGAE_TRANSFORM = new Transform3d(Units.inchesToMeters(-6), 0,
-            Units.inchesToMeters(39.575), Rotation3d.kZero);
-    public static final Transform3d LOW_ALGAE_TRANSFORM = new Transform3d(Units.inchesToMeters(-6), 0,
-            Units.inchesToMeters(23.675), Rotation3d.kZero);
-
-    public static final Pose3d[] REEF_ALGAE_POSES = new Pose3d[REEF_TAG_POSES.length];
-
-    static {
-        for (int i = 0; i < REEF_ALGAE_POSES.length; i++) {
-            REEF_ALGAE_POSES[i] = REEF_TAG_POSES[i].plus(i % 2 == 0 ? HIGH_ALGAE_TRANSFORM : LOW_ALGAE_TRANSFORM);
-        }
-    }
-
-    public static final double BARGE_X = FIELD_LENGTH / 2.0;
-    public static final double BARGE_WIDTH = Units.inchesToMeters(40) / 2.0;
-    public static final double BARGE_HEIGHT = Units.inchesToMeters(74 + 8);
-    public static final double BARGE_HEIGHT_TOLERANCE = Units.inchesToMeters(12);
-
-    public static final Pose2d BLUE_PROCESSOR = VisionConstants.aprilTagLayout.getTagPose(16).get().toPose2d();
-    public static final Pose2d RED_PROCESSOR = VisionConstants.aprilTagLayout.getTagPose(3).get().toPose2d();
 
     public static final double TRANSLATIONAL_TOLERANCE = Units.inchesToMeters(16);
     public static final double DROP_COOLDOWN = 2.0;

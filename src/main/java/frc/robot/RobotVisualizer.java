@@ -1,9 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants.VisualizerConstants;
@@ -59,24 +56,7 @@ public class RobotVisualizer {
         wrist1.setAngle(Units.radiansToDegrees(wristAngle));
         wrist2.setAngle(Units.radiansToDegrees(wristAngle) + 54.14);
 
-        double climberDisplacement = Units.inchesToMeters(18) * Math.pow(Math.sin(RobotController.getFPGATime() / 1.5e6), 2);
-
         // 3D Components
         Logger.recordOutput("RobotVisualizer/Arm Components", armPos.getComponentTransforms());
-        Logger.recordOutput("RobotVisualizer/Climber Components", new Transform3d[] {
-                new Transform3d(
-                        climberDisplacement * VisualizerConstants.CLIMBER_ANGLE.getCos() * 0.5,
-                        0,
-                        climberDisplacement * VisualizerConstants.CLIMBER_ANGLE.getSin() * 0.5,
-                        Rotation3d.kZero
-                ),
-                new Transform3d(
-                        climberDisplacement * VisualizerConstants.CLIMBER_ANGLE.getCos(),
-                        0,
-                        climberDisplacement * VisualizerConstants.CLIMBER_ANGLE.getSin(),
-                        Rotation3d.kZero
-                ),
-        });
-        // Logger.recordOutput("RobotVisualizer/Origin", Pose2d.kZero);
     }
 }

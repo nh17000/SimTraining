@@ -11,15 +11,12 @@ import frc.robot.util.crystalcaverns.FieldConstants;
 
 // for robor reveal
 public class Cameras {    
-    private static final LoggedTunableNumber x = new LoggedTunableNumber("Test/x", FieldConstants.RED_CAVE_ORIGIN.getX());
-    private static final LoggedTunableNumber y = new LoggedTunableNumber("Test/y", FieldConstants.RED_CAVE_ORIGIN.getY());
-    private static final LoggedTunableNumber z = new LoggedTunableNumber("Test/z", 1.67);
-    private static final LoggedTunableNumber roll = new LoggedTunableNumber("Test/r", 0.0);
-    private static final LoggedTunableNumber pitch = new LoggedTunableNumber("Test/p", 30);
-    private static final LoggedTunableNumber yaw = new LoggedTunableNumber("Test/yaw", 0.0);
-    // private final LoggedTunableNumber r2 = new LoggedTunableNumber("Test/r2", 0.0);
-    // private final LoggedTunableNumber p2 = new LoggedTunableNumber("Test/p2", 0.0);
-    // private final LoggedTunableNumber yaw2 = new LoggedTunableNumber("Test/yaw2", 0.0);
+    private static final LoggedTunableNumber x = new LoggedTunableNumber("Camera/x", FieldConstants.RED_CAVE_ORIGIN.getX());
+    private static final LoggedTunableNumber y = new LoggedTunableNumber("Camera/y", FieldConstants.RED_CAVE_ORIGIN.getY());
+    private static final LoggedTunableNumber z = new LoggedTunableNumber("Camera/z", 1.67);
+    private static final LoggedTunableNumber roll = new LoggedTunableNumber("Camera/r", 0.0);
+    private static final LoggedTunableNumber pitch = new LoggedTunableNumber("Camera/p", 30);
+    private static final LoggedTunableNumber yaw = new LoggedTunableNumber("Camera/yaw", 0.0);
 
 
     public static void log(Pose2d roborPose) {

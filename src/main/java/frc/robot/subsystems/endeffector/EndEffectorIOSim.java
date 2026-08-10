@@ -22,7 +22,6 @@ import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.crystalcaverns.Colors;
 import frc.robot.util.crystalcaverns.CrystalOnField;
 import frc.robot.util.crystalcaverns.CrystalOnFly;
-import frc.robot.util.crystalcaverns.FieldConstants;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -40,12 +39,9 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     @Getter
     private CrystalColor heldCrystalColor = Colors.getRandomCrystalColor();
 
-    private static final Pose3d HIDDEN_CRYSTAL_POS = 
-            new Pose3d(FieldConstants.CENTER.getX(), FieldConstants.CENTER.getY(), -0.5, Rotation3d.kZero);
-
     private Timer intakingTimer = new Timer();
 
-    private Pose3d intookGamePiecePrevPose = HIDDEN_CRYSTAL_POS;
+    private Pose3d intookGamePiecePrevPose = Pose3d.kZero;
 
     private final FlywheelSim rollerSim = new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
@@ -75,15 +71,15 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
     private BooleanSupplier handoffSupplier;
     private DoubleSupplier launcherRPSSupplier;
 
-    // private final LoggedTunableNumber x = new LoggedTunableNumber("cc/x", 0.3);
-    // private final LoggedTunableNumber y = new LoggedTunableNumber("Test/y", 0.0);
-    private final LoggedTunableNumber z = new LoggedTunableNumber("cc/z", 0.0);
-    // private final LoggedTunableNumber roll = new LoggedTunableNumber("Test/r", 0.0);
-    private final LoggedTunableNumber pitch = new LoggedTunableNumber("cc/p", 57.75);
-    // private final LoggedTunableNumber yaw = new LoggedTunableNumber("Test/yaw", 0.0);
-    // private final LoggedTunableNumber r2 = new LoggedTunableNumber("Test/r2", 0.0);
-    private final LoggedTunableNumber p2 = new LoggedTunableNumber("cc/p2", 57.5);
-    // private final LoggedTunableNumber yaw2 = new LoggedTunableNumber("Test/yaw2", 0.0);
+    // private final LoggedTunableNumber x = new LoggedTunableNumber("EE/x", 0.3);
+    // private final LoggedTunableNumber y = new LoggedTunableNumber("EE/y", 0.0);
+    private final LoggedTunableNumber z = new LoggedTunableNumber("EE/z", 0.0);
+    // private final LoggedTunableNumber roll = new LoggedTunableNumber("EE/r", 0.0);
+    private final LoggedTunableNumber pitch = new LoggedTunableNumber("EE/p", 57.75);
+    // private final LoggedTunableNumber yaw = new LoggedTunableNumber("EE/yaw", 0.0);
+    // private final LoggedTunableNumber r2 = new LoggedTunableNumber("EE/r2", 0.0);
+    private final LoggedTunableNumber p2 = new LoggedTunableNumber("EE/p2", 57.5);
+    // private final LoggedTunableNumber yaw2 = new LoggedTunableNumber("EE/yaw2", 0.0);
 
     public EndEffectorIOSim(
             AbstractDriveTrainSimulation driveSimulation, Supplier<Transform3d> wristTransformSupplier, BooleanSupplier canHandoffSupplier, DoubleSupplier launcherRPSSupplier) {

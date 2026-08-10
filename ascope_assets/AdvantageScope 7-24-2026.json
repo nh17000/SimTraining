@@ -10,29 +10,15 @@
           "width": 213,
           "expanded": [
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/Turret/TurretData",
             "/RealOutputs",
             "/RealOutputs/LoggedRobot",
             "/DriverStation",
-            "/AdvantageKit/Hood/HoodData",
-            "/AdvantageKit/Shooter/ShooterOneData",
             "/AdvantageKit/RealOutputs/HeldGamePieceManager",
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs/RobotVisualizer",
-            "/AdvantageKit/RealOutputs/GamePieceManager",
             "/Tuning",
-            "/Tuning/Gemstone",
-            "/AdvantageKit/RealOutputs/EnergyTracker",
-            "/AdvantageKit/RealOutputs/EnergyTracker/Energies",
-            "/AdvantageKit/Intake",
-            "/AdvantageKit/Intake/Pivot1MotorData",
-            "/AdvantageKit/Intake/Pivot2MotorData",
-            "/AdvantageKit/RealOutputs/Intake",
-            "/Tuning/Hood",
-            "/AdvantageKit/RealOutputs/EE",
             "/AdvantageKit/RealOutputs/Odometry",
             "/AdvantageKit/RealOutputs/FieldSimulation",
-            "/Tuning/Test",
             "/Tuning/Arm"
           ]
         },
@@ -58,7 +44,7 @@
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
-                      "model": "Pearsmatic"
+                      "model": "Pearsmatic V2"
                     }
                   },
                   {
@@ -66,13 +52,6 @@
                     "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Arm Components",
                     "logType": "Transform3d[]",
                     "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "component",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Climber Components",
-                    "logType": "Transform3d[]",
-                    "visible": false,
                     "options": {}
                   },
                   {
