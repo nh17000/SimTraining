@@ -48,15 +48,13 @@ public final class Constants {
 
     public static final class AlignConstants {
         public static final double BRANCH_SPACING = Units.inchesToMeters(5);
-        // public static final double REEF_ALIGN_TZ = 0; // Units.inchesToMeters(30);
 
         public static final Translation2d LEFT_BRANCH_OFFSET = new Translation2d(0.0, -BRANCH_SPACING);
         public static final Translation2d RIGHT_BRANCH_OFFSET = new Translation2d(0.0, BRANCH_SPACING);
-        public static final Translation2d MID_OFFSET = new Translation2d(0.0, 0.0);
-        // public static final Translation2d STATION_OFFSET = new Translation2d(Units.inchesToMeters(18), 0.0);
 
         public static final Transform2d MINE_TRANSFORM = new Transform2d(Units.inchesToMeters(28), 0, Rotation2d.k180deg);
-        public static final Translation2d BACKWARDS_OFFSET = new Translation2d(Units.inchesToMeters(12.5), 0);
+        public static final Translation2d CAVE_BACKWARDS_OFFSET = new Translation2d(Units.inchesToMeters(2), 0); // 12.5
+        public static final Translation2d CLASSIFIER_BACKWARDS_OFFSET = new Translation2d(Units.inchesToMeters(12.5), 0);
 
         public static final double DRIVE_kP = 5.0; // m/s per m error
         public static final double DRIVE_kI = 0.0;
@@ -72,7 +70,7 @@ public final class Constants {
 
         public static final double ALIGN_ROT_TOLERANCE = Units.degreesToRadians(3);
         public static final double ALIGN_TRANSLATION_TOLERANCE = Units.inchesToMeters(2);
-
+        
         public static final double NET_ALIGN_TZ = Units.inchesToMeters(32);
         public static final double MIN_DIST_TO_WALL = Units.inchesToMeters(28);
         public static final double[] NET_RED_Y = {MIN_DIST_TO_WALL, FieldConstants.FIELD_WIDTH / 2.0 - MIN_DIST_TO_WALL

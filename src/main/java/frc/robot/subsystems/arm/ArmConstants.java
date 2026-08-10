@@ -12,11 +12,12 @@ public class ArmConstants {
         STOWED(0, 0, 0),
         UPPER_CRYSTAL(35, 25, -20),
         LOWER_CRYSTAL(35, 0, -20),
-        UPPER_CRYSTAL_BACKWARDS(147, 24, 55),
-        LOWER_CRYSTAL_BACKWARDS(147, 0, 55),
+        UPPER_CRYSTAL_BACKWARDS(139, 14.5, 58),
+        LOWER_CRYSTAL_BACKWARDS(128, 0, 97),
         GROUND_INTAKE(0, 0, -55),
         TOP_CLASSIFIER(55, 6, -60 + 16.5),
         BOTTOM_CLASSIFIER(36.5, 0, -47.5 + 16.5),
+        BOTTOM_CLASSIFIER_BACKWARDS(87.5, 0, 146),
         HOLD(60, 0, -20),
         MINE(40, 0, -12.5 + 16.5),
         HANDOFF(0, 0, 146),
@@ -42,6 +43,10 @@ public class ArmConstants {
                 case 1 -> isForwards ? ArmState.LOWER_CRYSTAL : ArmState.LOWER_CRYSTAL_BACKWARDS;
                 default -> ArmState.STOWED;
             };
+        }
+
+        public static ArmState classifier(boolean isForwards) {
+            return isForwards ? ArmState.TOP_CLASSIFIER : ArmState.BOTTOM_CLASSIFIER_BACKWARDS;
         }
     }
 

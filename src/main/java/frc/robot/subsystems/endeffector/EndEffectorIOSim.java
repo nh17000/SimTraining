@@ -53,9 +53,9 @@ public class EndEffectorIOSim extends EndEffectorIOTalonFX {
             EndEffectorConstants.LR_MOTOR);
 
     private static final double MIN_POS = 0.215;
-    private static final double MAX_EE_POS = 0.335;
+    private static final double MAX_EE_POS = 0.345;
     private static final double MAX_LAUNCHER_POS = 0.57;
-    private static final double INTAKE_POS = 0.32;
+    private static final double INTAKE_POS = 0.33;
     
     private static final double POS_TOLERANCE = 0.01;
     

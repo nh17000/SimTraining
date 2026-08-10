@@ -275,15 +275,16 @@ public class RobotContainer {
                 .whileTrue(arm.followStateSupplier(() -> ArmState.GROUND_INTAKE))
                 .onFalse(arm.followStateSupplier(
                             () -> inAllianceZone() && endEffector.hasGamePiece() ? ArmState.HOLD : ArmState.STOWED)
-                    .andThen(new ConditionalCommand(
-                        launcher.setSelfDirecting(), Commands.none(), () -> endEffector.hasCrystal() && !inAllianceZone())));
+                    .andThen(new ConditionalCommand(launcher.setSelfDirecting(), Commands.none(), 
+                        () -> (endEffector.hasCrystal() && !inAllianceZone()) 
+                                || arm.getState() == ArmState.BOTTOM_CLASSIFIER_BACKWARDS)));
 
         controller
                 .rightBumper()
                 .whileTrue(new DeferredCommand(
                         () -> switch (arm.getState()) {
                                 case HANDOFF -> endEffector.outtakeHandoff();
-                                case BOTTOM_CLASSIFIER, TOP_CLASSIFIER -> endEffector.outtakeClassifier();
+                                case BOTTOM_CLASSIFIER, BOTTOM_CLASSIFIER_BACKWARDS, TOP_CLASSIFIER -> endEffector.outtakeClassifier();
                                 default -> endEffector.outtake(); 
                         },
                         Set.of(endEffector)))
@@ -291,8 +292,10 @@ public class RobotContainer {
 
         controller
                 .a()
-                .onTrue(arm.applyState(ArmState.TOP_CLASSIFIER))
-                .whileTrue(align.classifierAlign(drive));
+                .onTrue(arm.followStateSupplier(() -> ArmState.classifier(align.isForwards())))
+                .whileTrue(align.classifierAlign(drive)
+                        .alongWith(new ConditionalCommand(
+                                launcher.setSelfDirecting(), Commands.none(), () -> !align.isForwards())));
 
         controller
                 .x()

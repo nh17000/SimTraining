@@ -66,7 +66,7 @@ public class AutoAlign {
             offset = alignLeft ? AlignConstants.LEFT_BRANCH_OFFSET : AlignConstants.RIGHT_BRANCH_OFFSET;
         }
         if (!isForwards) {
-            offset = offset.plus(AlignConstants.BACKWARDS_OFFSET);
+            offset = offset.plus(AlignConstants.CAVE_BACKWARDS_OFFSET);
         }
 
         return targetPose =
@@ -74,7 +74,29 @@ public class AutoAlign {
     }
 
     public Command classifierAlign(Drive drive) {
-        return new DriveToPose(drive, () -> robotSupplier.get().nearest(FieldConstants.CLASSIFIER_ALIGN_POSES), robotSupplier);
+        return new DriveToPose(drive, () -> findClassifierTargetPose(robotSupplier.get()), robotSupplier);
+    }
+
+    private Pose2d findClassifierTargetPose(Pose2d currentPose) {
+        Pose2d tagPose = currentPose.nearest(FieldConstants.CLASSIFIER_ALIGN_POSES);
+
+        Rotation2d forwardsRotation = tagPose.getRotation();
+        Rotation2d backwardsRotation = forwardsRotation.plus(Rotation2d.k180deg);
+
+        Rotation2d currRot2d = currentPose.getRotation();
+
+        double fwdError = forwardsRotation.minus(currRot2d).getDegrees();
+        double bwdError = backwardsRotation.minus(currRot2d).getDegrees();
+
+        isForwards = Math.abs(fwdError) < Math.abs(bwdError);
+        
+        Translation2d offset = Translation2d.kZero;
+        if (!isForwards) {
+            offset = offset.plus(AlignConstants.CLASSIFIER_BACKWARDS_OFFSET);
+        }
+
+        return targetPose =
+                tagPose.transformBy(new Transform2d(offset, isForwards ? Rotation2d.kZero : Rotation2d.k180deg));
     }
 
     public Command jewelryAlign(Drive drive) {
