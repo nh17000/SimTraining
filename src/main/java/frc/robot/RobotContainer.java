@@ -101,8 +101,8 @@ public class RobotContainer {
     private double maxClimbHeight = 0;
 
     private final LoggedTunableNumber maxClimbHeight1 = new LoggedTunableNumber("rc/mch", 5.75);
-    private final LoggedTunableNumber maxClimbHeight2 = new LoggedTunableNumber("rc/mch2", 13.5);
-    private final LoggedTunableNumber maxClimbHeight3 = new LoggedTunableNumber("rc/mch3", 28.4);
+//     private final LoggedTunableNumber maxClimbHeight2 = new LoggedTunableNumber("rc/mch2", 13.5);
+//     private final LoggedTunableNumber maxClimbHeight3 = new LoggedTunableNumber("rc/mch3", 28.4);
 
 
     /**
@@ -315,33 +315,35 @@ public class RobotContainer {
                 .whileTrue(align.caveAlignUpper(drive));
 
         controller
-                .leftTrigger()
+                .povLeft()
                 .onTrue(arm.applyState(ArmState.MINE))
                 .whileTrue(align.mineAlign(drive));
 
         controller
-                .povLeft()
+                .povUp()
                 .onTrue(arm.applyState(ArmState.L1_CLIMB)
                         .andThen(new InstantCommand(() -> { 
                                 this.curClimbHeight = 0; 
                                 this.maxClimbHeight = maxClimbHeight1.get(); 
                         })));
+        
+        // these (L2 + L3 climb) are commented out because while physically possible, 
+        // they cause the arm to extend past the vertical extension limit
+        // controller
+        //         .povRight()
+        //         .onTrue(arm.applyState(ArmState.L2_CLIMB)
+        //                 .andThen(new InstantCommand(() -> { 
+        //                         this.curClimbHeight = 0; 
+        //                         this.maxClimbHeight = maxClimbHeight2.get(); 
+        //                 })));
                 
-        controller
-                .povRight()
-                .onTrue(arm.applyState(ArmState.L2_CLIMB)
-                        .andThen(new InstantCommand(() -> { 
-                                this.curClimbHeight = 0; 
-                                this.maxClimbHeight = maxClimbHeight2.get(); 
-                        })));
-                
-        controller
-                .povUp()
-                .onTrue(arm.applyState(ArmState.L3_CLIMB)
-                        .andThen(new InstantCommand(() -> { 
-                                this.curClimbHeight = 0; 
-                                this.maxClimbHeight = maxClimbHeight3.get(); 
-                        })));
+        // controller
+        //         .povUp()
+        //         .onTrue(arm.applyState(ArmState.L3_CLIMB)
+        //                 .andThen(new InstantCommand(() -> { 
+        //                         this.curClimbHeight = 0; 
+        //                         this.maxClimbHeight = maxClimbHeight3.get(); 
+        //                 })));
                 
         controller.povDown()
                 .onTrue(new DeferredCommand(
